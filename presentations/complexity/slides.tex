@@ -1,0 +1,132 @@
+\documentclass[10pt,pdf,utf8,russian,aspectratio=169]{beamer}
+\usepackage[T2A]{fontenc}
+\usepackage[english,russian]{babel}
+%
+% Choose how your presentation looks.
+%
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{Boadilla}      % or try Darmstadt, Madrid, Warsaw, ...
+  \usecolortheme{seagull} % or try albatross, beaver, crane, ..
+
+  \usefonttheme{structurebold}  % or try serif, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+} 
+
+
+\title[Сложность модели]{Сложность моделей глубокого обучения}
+\author{Бахтеев Олег}
+\institute{МФТИ}
+\date{02.11.2016}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Uncomment these lines for an automatically generated outline.
+\begin{frame}{План}
+  \tableofcontents
+\end{frame}
+
+\section{Сложность модели}
+\begin{frame}{Сложность модели}
+Мотивация
+\end{frame}
+
+
+\begin{frame}{Minimum description length}
+\end{frame}
+
+\begin{frame}{MDL и Колмогоровская сложность}
+\end{frame}
+
+\begin{frame}{Refined MDL}
+\end{frame}
+
+
+\begin{frame}{Байесовый подход к сложности}
+\end{frame}
+
+\begin{frame}{Байесовый подход к сложности}
+Порождение vs описание
+\end{frame}
+
+\begin{frame}{Кросс-валидация vs Байес}
+\end{frame}
+
+\section{Вариационная нижняя оценка}
+\begin{frame}{Вариационная оценка}
+Зачем нужна, что такое
+\end{frame}
+
+\begin{frame}{Пример: логистическая функция}
+Копипсата работы Адуенко
+\end{frame}
+
+\begin{frame}{Получение вариацонной оценки}
+Формула получения нижней оценки
+\end{frame}
+
+\begin{frame}{$D_\text{KL}$}
+
+\end{frame}
+
+\begin{frame}{Пример: нормальное распределение}
+Из Бишопа
+\end{frame}
+
+
+\begin{frame}{Использование вариационной нижней оценки}
+Зачем использовать? \\
+Когда использовать?
+\end{frame}
+
+\section{Получение оценок для порождающих моделей}
+\begin{frame}{Пример: автокодировщик}
+Что такое?
+\end{frame}
+
+\begin{frame}{Автокодировщик как energy-based модель}
+Интегралы и картинки из Bengio
+\end{frame}
+
+\begin{frame}{Вариационный автокодировщик}
+Формулы
+\end{frame}
+
+\begin{frame}{Вариационный автокодировщик: правдоподобии модели}
+Полная формула 
+\end{frame}
+
+\begin{frame}{Вариационный автокодировщик: правдоподобии модели}
+Графики, примеры работы
+\end{frame}
+
+\section{Получение оценок для разделяющих моделей}
+\begin{frame}{Разделяющие модели: правдоподобие}
+аппроксимация нормальным распределением
+\end{frame}
+
+\begin{frame}{Градиентный спуск для оценки правдоподобия}
+Иллюстрация
+\end{frame}
+
+\begin{frame}{Переобучение}
+Иллюстрация
+\end{frame}
+
+\begin{frame}{Динамика Ланжевина}
+иллюстрация
+\end{frame}
+
+\begin{frame}{Результаты}
+\end{frame}
+
+\end{document}
+
