@@ -18,7 +18,7 @@
   \setbeamertemplate{caption}[numbered]
 } 
 
-
+\captionsetup[subfloat]{labelformat=empty}
 \title[Сложность модели]{Сложность моделей глубокого обучения}
 \author{Бахтеев Олег}
 \institute{МФТИ}
@@ -56,27 +56,27 @@
 где $\mathbf{f}$ --- модель, $\mathbf{X}$ --- выборка, $L$ --- длина описания в битах.
 \\
 \[
-\text{MDL}(\mathbf{f}, \mathbf{X}) \sim L(\mathbf{f}) + L(\mathbf{W}^*| \mathbf{f}) + L(\mathbf{X}|\mathbf{W}^*, \mathbf{f}),
+\text{MDL}(\mathbf{f}, \mathbf{X}) \sim L(\mathbf{f}) + L(\mathbf{w}^*| \mathbf{f}) + L(\mathbf{X}|\mathbf{w}^*, \mathbf{f}),
 \]
 $\mathbf{w}^*$ --- оптимальные параметры модели.\\
 
-
-$\mathbf{f}_1: L(\mathbf{f}_1)\qquad L(\mathbf{W}_1^*| \mathbf{f}_1) \qquad \qquad \qquad \qquad \qquad	\qquad L(\mathbf{X}|\mathbf{W}_1^*, \mathbf{f}_1) $\\
-$\mathbf{f}_2: L(\mathbf{f}_2)\qquad \qquad L(\mathbf{W}_2^*| \mathbf{f}_2) \qquad \qquad \qquad \qquad L(\mathbf{X}|\mathbf{W}_2^*, \mathbf{f}_2) $\\
-$\mathbf{f}_3: L(\mathbf{f}_3)\qquad \qquad \qquad L(\mathbf{W}_3^*| \mathbf{f}_3) \qquad \qquad \qquad \qquad \qquad L(\mathbf{X}|\mathbf{W}_3^*, \mathbf{f}_3) $
+\includegraphics[width=\textwidth]{./mdl.png}
+%$\mathbf{f}_1: L(\mathbf{f}_1)\qquad L(\mathbf{w}_1^*| \mathbf{f}_1) \qquad \qquad \qquad \qquad \qquad	\qquad L(\mathbf{X}|\mathbf{w}_1^*, \mathbf{f}_1) $\\
+%$\mathbf{f}_2: L(\mathbf{f}_2)\qquad \qquad L(\mathbf{w}_2^*| \mathbf{f}_2) \qquad \qquad \qquad \qquad L(\mathbf{X}|\mathbf{w}_2^*, \mathbf{f}_2) $\\
+%$\mathbf{f}_3: L(\mathbf{f}_3)\qquad \qquad \qquad L(\mathbf{w}_3^*| \mathbf{f}_3) \qquad \qquad \qquad \qquad \qquad L(\mathbf{X}|\mathbf{w}_3^*, \mathbf{f}_3) $
 
 \end{frame}
 
 \begin{frame}{MDL и Колмогоровская сложность}
 \textbf{Колмогоровская сложность} --- длина минимального кода для выборки на предварительно заданном языке.
 
-\textbf{Теорема об инвариантности кодов}\\
-Для двух сводимых по Тьюрингу языков колмогоровской сложность  отличается не более чем на константу, не зависяющую от мощности выборки.\\
+\textbf{Теорема инвариантности}\\
+Для двух сводимых по Тьюрингу языков колмогоровская сложность  отличается не более чем на константу, не зависяющую от мощности выборки.\\
 
-Отличия от MDL:
+\textbf{Отличия от MDL}:
 \begin{itemize}
 \item Колмогоровская сложность невычислима.
-\item Длина кода может зависеть от выбранного языка. Для небольших выборок теорема об инвариантности кодов не дает адекватных результатов.
+\item Длина кода может зависеть от выбранного языка. Для небольших выборок теорема инвариантности не дает адекватных результатов.
 \end{itemize}
 \end{frame}
 
@@ -84,12 +84,12 @@ $\mathbf{f}_3: L(\mathbf{f}_3)\qquad \qquad \qquad L(\mathbf{W}_3^*| \mathbf{f}_
 Пусть выборка $\mathbf{X}$ лежит в некотором конечном множестве $\mathbb{X}: \mathbf{X} \subset \mathbb{X}$.
 %2.20
 \[
-\text{MDL}(\mathbf{f}, \mathbf{X}) = L(\mathbf{X}|\mathbf{W}^*(\mathbf{X}), \mathbf{f}) + \text{COMP}(\mathbf{f}),
+\text{MDL}(\mathbf{f}, \mathbf{X}) = L(\mathbf{X}|\mathbf{w}^*(\mathbf{X}), \mathbf{f}) + \text{COMP}(\mathbf{f}),
 \]
-$$ L(\mathbf{X}|\mathbf{W}^*, \mathbf{f}) = -\text{log}p(\mathbf{X}|\mathbf{W}^*(\mathbf{X}), \mathbf{f}), \quad 
-\text{COMP} = log \sum_{\mathbf{X}' \in \mathbb{X}} P(\mathbf{X}'|\mathbf{W}^*(\mathbf{X}'), \mathbf{f}).$$
+$$ L(\mathbf{X}|\mathbf{w}^*, \mathbf{f}) = -\text{log}p(\mathbf{X}|\mathbf{w}^*(\mathbf{X}), \mathbf{f}), \quad 
+\text{COMP} = \text{log} \sum_{\mathbf{X}' \in \mathbb{X}} P(\mathbf{X}'|\mathbf{w}^*(\mathbf{X}'), \mathbf{f}).$$
 
-В случае (TODO: уточнить) оценка MDL совпадает с точностью до $o(1)$ с байесовской оценкой правдоподобия (``Evidence''):
+В случае, если распределение $p(\mathbf{X}|\mathbf{w})$ принадлежит экспоненциальному семейству, оценка MDL совпадает с точностью до $o(1)$ с байесовской оценкой правдоподобия (``Evidence''):
 \[
 	p(\mathbf{X}|\mathbf{f}) = \int_\mathbf{w} p(\mathbf{X}|\mathbf{w})p(\mathbf{w}) d\mathbf{w},
 \]
@@ -104,7 +104,7 @@ $J(\mathbf{w})$  --- информация Фишера.
 \begin{frame}{Байесовый подход к сложности}
 Правдоподобие модели (``Evidence''):
 \[
-	p(\mathbf{X}|\mathbf{f}) = \int_\mathbf{w} p(\mathbf{X}|\mathbf{w})p(\mathbf{w}) d\mathbf{w}.
+	p(\mathbf{X}|\mathbf{f}) = \int_\mathbf{w} p(\mathbf{X}|\mathbf{w})p(\mathbf{w}|\mathbf{f}) d\mathbf{w}.
 \]
 
 
@@ -143,12 +143,12 @@ $J(\mathbf{w})$  --- информация Фишера.
 \begin{frame}{Evidence vs Кросс-валидация}
 Оценка Evidece:
 \[
-log~p(\mathbf{X}|\mathbf{f}) = log~p(\mathbf{x}_1|\mathbf{f}) + log~p(\mathbf{x}_2|\mathbf{x}_1, \mathbf{f}) + \dots +  log~p(\mathbf{x}_n|\mathbf{x}_1,\dots,\mathbf{x}_{n-1}, \mathbf{f}).
+\text{log}~p(\mathbf{X}|\mathbf{f}) = \text{log}~p(\mathbf{x}_1|\mathbf{f}) + \text{log}~p(\mathbf{x}_2|\mathbf{x}_1, \mathbf{f}) + \dots +  \text{log}~p(\mathbf{x}_n|\mathbf{x}_1,\dots,\mathbf{x}_{n-1}, \mathbf{f}).
 \]
 
 Оценка leave-one-out:
 \[
-LOU = \mathsf{E} log~p(\mathbf{x}_n|\mathbf{x}_1,\dots,\mathbf{x}_{n-1}, \mathbf{f}).
+\text{LOU} = \mathsf{E} \text{log}~p(\mathbf{x}_n|\mathbf{x}_1,\dots,\mathbf{x}_{n-1}, \mathbf{f}).
 \]
 
 Кросс-валидация оценивает сложность описания одной части выборки при условии другой части выборки. \\
@@ -159,7 +159,7 @@ Evidence оценивает \textbf{полную} сложность описа�
 \begin{itemize}
 \item{Аппроксимация методом Лапласа}\\
 $$
-	p(\mathbf{X}|\mathbf{f}) = \int_\mathbf{w} p(\mathbf{X}|\mathbf{w}) p(\mathbf{w}|\mathbf{f}) = \int_\mathbf{w} \text{exp}(-S(\mathbf{w}))	\sim  \text{exp}S(\hat{\mathbf{w}}) \int_\mathbf{w} \text{exp} (-\frac{1}{2}\Delta \mathbf{w}^\text{T} \nabla \nabla S(\mathbf{w}) \Delta \mathbf{w} ).
+	p(\mathbf{X}|\mathbf{f}) = \int_\mathbf{w} p(\mathbf{X}|\mathbf{w}) p(\mathbf{w}|\mathbf{f}) = \int_\mathbf{w} \text{exp}(-S(\mathbf{w}))	\sim  \text{exp}S(\hat{\mathbf{w}}) \int_\mathbf{w} \text{exp} (-\frac{1}{2}\Delta \mathbf{w}^\text{T} \nabla \nabla S(\hat{\mathbf{w}}) \Delta \mathbf{w} ).
 $$
 
 \item {Методы Монте-Карло}
@@ -180,7 +180,7 @@ $\mathbf{W}$ --- множество векторов параметров мощ
 %http://www.orchid.ac.uk/eprints/40/1/fox_vbtut.pdf
 \textbf{Вариационная оценка Evidence} --- метод нахождения приближенного значения аналитически невычислимого распределения $p(\mathbf{w}|\mathbf{X}, \mathbf{f})$ распределением $q(\mathbf{w}) \in \mathbf{Q}$. Получение вариационной нижней оценки обычно сводится к задаче минимизации
 $$\text{KL}(q(\mathbf{w})||p(\mathbf{w}| \mathbf{X}))=
-\int_{\mathbf{w}} q(\mathbf{w}) \text{log}~\frac{p(\mathbf{w}| \mathbf{X})} {q(\mathbf{w})}d\mathbf{w}.
+-\int_{\mathbf{w}} q(\mathbf{w}) \text{log}~\frac{p(\mathbf{w}| \mathbf{X})} {q(\mathbf{w})}d\mathbf{w}.
 $$
 
 \begin{figure}
@@ -212,7 +212,7 @@ $$
 Максимизация вариационной нижней оценки $$\int_{\mathbf{w}} q(\mathbf{w})\text{log}~\frac{p(\mathbf{X},\mathbf{w}|\mathbf{f})}{q(\mathbf{w})}d\mathbf{w}$$   эквивалентна минимизации дивергенции между распределением распределением $q(\mathbf{w}) \in Q$ и апостериорным распределением параметров $p(\mathbf{w}|\mathbf{X}, \mathbf{f})$:
 \[
 q = \text{argmax}_{q \in Q}\int_{\mathbf{w}} q(\mathbf{w})\text{log}~\frac{p(\mathbf{X},\mathbf{w}|\mathbf{f})}{q(\mathbf{w})}d\mathbf{w} \Leftrightarrow 	
-q = \text{argmin}_{q \in Q} \text{D}_\text{KL}  (q(\mathbf{w})||p(\mathbf{w}|| \mathbf{X}, \mathbf{f})),
+q = \text{argmin}_{q \in Q} \text{D}_\text{KL}  (q(\mathbf{w})||p(\mathbf{w}| \mathbf{X}, \mathbf{f})),
 \]
 т.к.
 $$\text{log}~p(\mathbf{X}| \mathbf{f})  = \int_{\mathbf{w}} q(\mathbf{w})\text{log}~\frac{p(\mathbf{X},\mathbf{w}|\mathbf{f})}{q(\mathbf{w})}d\mathbf{w} + \text{D}_\text{KL}  (q(\mathbf{w})||p(\mathbf{w}| \mathbf{X}, \mathbf{f})) = \text{const}.$$
@@ -235,8 +235,9 @@ $$\text{log}~p(\mathbf{X}| \mathbf{f})  = \int_{\mathbf{w}} q(\mathbf{w})\text{l
 \begin{itemize}
 \item сводит задачу нахождения апостериорной вероятности к методам оптимизации;
 \item проще масштабируется, чем аппроксимация Лапласа;
-\item проще в использовании, чем MCMC.
+\item проще в использовании, чем сэмплирующие методы.
 \end{itemize}
+\textbf{Variational Inference может давать сильно заниженную оценку.}
 \end{frame}
 
 
@@ -256,15 +257,17 @@ $$
 
 
 \begin{frame}{Вариационный автокодировщик}
+\begin{columns}[T]
+\begin{column}{.65\textwidth}
 Пусть объекты выборки $\mathbf{X}$ порождены при условии скрытой переменной $\mathbf{h} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$:
 $$
 \mathbf{x} \sim p(\mathbf{x}|\mathbf{h}, \mathbf{w}).
 $$
-$p(\mathbf{x}|\mathbf{h}, \mathbf{w})$ --- неизвестно.
+$p(\mathbf{h}|\mathbf{x}, \mathbf{w})$ --- неизвестно.
 
 Будем максимизировать вариационную оценку правдоподобия выборки:
 $$
-\text{log}p(\mathbf{x}|\mathbf{w}) \geq \mathsf{E}_{q_\phi(\mathbf{h}|\mathbf{x}}\text{log}~p(\mathbf{x}|\mathbf{h}, \mathbf{w}) - D_\text{KL}(q_\phi(\mathbf{h}|\mathbf{x})||p(\mathbf{h})) \to \max.
+\text{log}p(\mathbf{x}|\mathbf{w}) \geq \mathsf{E}_{q_\phi(\mathbf{h}|\mathbf{x})}\text{log}~p(\mathbf{x}|\mathbf{h}, \mathbf{w}) - D_\text{KL}(q_\phi(\mathbf{h}|\mathbf{x})||p(\mathbf{h})) \to \max.
 $$
 
 Распределения $q_\phi(\mathbf{h}|\mathbf{x})$ и $p(\mathbf{x}|\mathbf{h}, \mathbf{w})$ моделируются нейросетью:
@@ -275,23 +278,28 @@ $$
 p(\mathbf{x}|\mathbf{h}, \mathbf{w}) \sim \mathcal{N}(\boldsymbol{\mu}_w(\mathbf{h}),\boldsymbol{\sigma}_w^2(\mathbf{h})),
 $$
 где функции $\boldsymbol{\mu}$,$\boldsymbol{\sigma}$ --- выходы нейросети.\\
+\end{column}%
+\hfill%
+\begin{column}{.25\textwidth}
 \begin{figure}
   \centering
-\includegraphics[width=0.15\textwidth]{graph.png}
+\includegraphics[width=\textwidth]{graph.png}
 \end{figure}
+\end{column}
+\end{columns}
 \end{frame}
 
-\begin{frame}{Вариационный автокодировщик: правдоподобии модели}
+\begin{frame}{Вариационный автокодировщик: evidence}
 
 Оценка evidence получается двойным применением вариационной техники:
 $$
 \text{log}~p(\mathbf{X}|\mathbf{f}) \geq \mathsf{E}_{q_\mathbf{w}} \text{log}\hat{p}(\mathbf{x}|\mathbf{w}) + \text{log}~p(\mathbf{w}|\mathbf{f}) - \text{log}~q(\mathbf{w}),
 $$
-где $q_\mathbf{w}$ --- распределение, аппроксимирующее $p(\mathbf{x}|\mathbf{w}, \mathbf{f})$, $ \text{log}\hat{p}(\mathbf{x}|\mathbf{w})$ --- вариационная оценка правдоподобия выборки.
+где $q_\mathbf{w}$ --- распределение, аппроксимирующее $p(\mathbf{w}|\mathbf{x}, \mathbf{f})$, $ \text{log}\hat{p}(\mathbf{x}|\mathbf{w})$ --- вариационная оценка правдоподобия выборки.
 
 Для оптимизации вариационных параметов применяется следующая параметризация:
 $$
-\hat{\mathbf{w}} = \boldsymbol{\mu}_\mathbf{w} + \boldsymbol{\sigma}_(\mathbf{w})\odot \boldsymbol{\epsilon}_1,\quad \hat{\mathbf{h}} = \boldsymbol{\mu}_\mathbf{h} + \boldsymbol{\sigma}_\mathbf{h}(\mathbf{h})\odot \boldsymbol{\epsilon}_2, 
+\hat{\mathbf{w}} = \boldsymbol{\mu}_\mathbf{w} + \boldsymbol{\sigma}_{\mathbf{w}}\odot \boldsymbol{\epsilon}_1,\quad \hat{\mathbf{h}} = \boldsymbol{\mu}_\mathbf{h} + \boldsymbol{\sigma}_\mathbf{h}(\mathbf{h})\odot \boldsymbol{\epsilon}_2, 
 $$
 $$
 \boldsymbol{\epsilon}_1, \boldsymbol{\epsilon}_2 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}).
@@ -337,14 +345,14 @@ $$
 \begin{frame}{Градиентный спуск для оценки правдоподобия}
 Проведем оптимизацию нейросети в режиме мультистарта из $r$ различных начальных приближений $\mathbf{w}_1, \dots, \mathbf{w}_r$ с использованием градиентного спуска:
 \[
-\mathbf{w}' = \mathbf{w} - \nabla \alpha \sum_{\mathbf{x} \in \mathbf{X}} \text{log}~p(\mathbf{x},\mathbf{w}|\mathbf{f}) = \sum_{\mathbf{x} \in \mathbf{X}} \text{log}~p(\mathbf{x}|\mathbf{w}, \mathbf{f}) p(\mathbf{w}|\mathbf{f}).
+\mathbf{w}' = \mathbf{w} - \alpha  \nabla \sum_{\mathbf{x} \in \mathbf{X}} \text{log}~p(\mathbf{x},\mathbf{w}|\mathbf{f}) = \sum_{\mathbf{x} \in \mathbf{X}} \text{log}~p(\mathbf{x}|\mathbf{w}, \mathbf{f}) p(\mathbf{w}|\mathbf{f}).
 \]
 
 Векторы параметров $\mathbf{w}_1,\dots,\mathbf{w}_r$ соответствуют некоторому скрытому распределению $q(\mathbf{w})$.
 
 Для получения вариационной оценки требуется оценка энтропии:
 $$
-\mathsf{E}_{q(\mathbf{w)}}[\text{log~}p (\mathbf{X}, \mathbf{w}| \mathbf{f})] - \mathsf{S}({q(\mathbf{w)}}).
+\text{log}~p(\mathbf{X}|\mathbf{f}) \geq  \mathsf{E}_{q(\mathbf{w)}}[\text{log~}p (\mathbf{X}, \mathbf{w}| \mathbf{f})] - \mathsf{S}({q(\mathbf{w)}}).
 $$
 
 
@@ -360,7 +368,7 @@ $$
 $$
 \text{log}~\hat{p}(\mathbf{Y}|\mathbf{X}, \mathbf{f}) \sim \frac{1}{r} \sum_{g = 1}^r L(\mathbf{w}^g_\tau, \mathbf{X}, \mathbf{Y})  + \mathsf{S}(q^0(\mathbf{w})) + \frac{1}{r}\sum_{b=1}^\tau\sum_{g=1}^r \bigl(-\alpha \text{Tr}[\mathbf{H}(\mathbf{w}_b^g)] - \alpha^2 \text{Tr}[\mathbf{H}(\mathbf{w}_b^g)\mathbf{H}(\mathbf{w}_b^g)]  \bigr),
 $$
-$\mathbf{w}_b^g$ --- вектор параметров старта $g$ на шаге $b$.
+$\mathbf{w}_b^g$ --- вектор параметров старта $g$ на шаге $b$, $\mathsf{S}(q^0(\mathbf{w}))$ --- начальная энтропия.
 \end{frame}
 \begin{frame}{Переобучение}
 Градиентный спуск не минимизирует дивергенцию $\text{KL}(q(\mathbf{w})||p(\mathbf{w}| \mathbf{X}))$. При приближении к моде распределения снижается оценка Evidence, что интерпретируется как переоубчение модели.
@@ -416,5 +424,18 @@ $\mathbf{w}_b^g$ --- вектор параметров старта $g$ на ш�
 
 \end{frame}
 
+\begin{frame}
+\frametitle{Используемые материалы}
+\begin{enumerate}
+\item David J. C. MacKay, Information Theory, Inference \& Learning Algorithms
+\item Peter Grunwald, A tutorial introduction to the minimum description length principle
+\item Kuznetsov M.P., Tokmakova A.A., Strijov V.V. Analytic and stochastic methods of structure parameter estimation
+\item Christopher Bishop, Pattern Recognition and Machine Learning
+\item Yoshua Bengio, Pascal Lamblin, Dan Popovici, Hugo Larochelle, Greedy Layer-Wise Training of Deep Networks
+\item Diederik P Kingma, Max Welling, Auto-Encoding Variational Bayes
+\item Dougal Maclaurin, David Duvenaud, Ryan P. Adams, Early Stopping is Nonparametric Variational Inference
+\item Max Welling, Yee Whye Teh, Bayesian Learning via Stochastic Gradient Langevin Dynamics
+\end{enumerate}
+\end{frame}
 \end{document}
 
