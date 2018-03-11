@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: arch_search_review.aux
+The style file: utf8gost71u.bst
+Database file #1: dis_literature.bib
+Warning--empty journal in reinf_deep2net
+You've used 35 entries,
+            2802 wiz_defined-function locations,
+            836 strings with 12097 characters,
+and the built_in function-call counts, 12814 in all, are:
+= -- 1600
+> -- 523
+< -- 38
++ -- 158
+- -- 123
+* -- 660
+:= -- 1510
+add.period$ -- 111
+call.type$ -- 35
+change.case$ -- 0
+chr.to.int$ -- 0
+cite$ -- 36
+duplicate$ -- 575
+empty$ -- 1215
+format.name$ -- 123
+if$ -- 3379
+int.to.chr$ -- 0
+int.to.str$ -- 35
+missing$ -- 0
+newline$ -- 204
+num.names$ -- 109
+pop$ -- 259
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 492
+stack$ -- 0
+substring$ -- 580
+swap$ -- 381
+text.length$ -- 3
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 1
+while$ -- 86
+width$ -- 37
+write$ -- 540
+(There was 1 warning)

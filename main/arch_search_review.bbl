@@ -1,0 +1,271 @@
+\begin{thebibliography}{10}
+\def\selectlanguageifdefined#1{
+\expandafter\ifx\csname date#1\endcsname\relax
+\else\language\csname l@#1\endcsname\fi}
+\ifx\undefined\url\def\url#1{{\small #1}}\else\fi
+\ifx\undefined\BibUrl\def\BibUrl#1{\url{#1}}\else\fi
+\ifx\undefined\BibAnnote\long\def\BibAnnote#1{}\else\fi
+\ifx\undefined\BibEmph\def\BibEmph#1{\emph{#1}}\else\fi
+
+\bibitem{layerwise_optimal}
+\selectlanguageifdefined{english}
+\BibEmph{Arnold~Ludovic, Ollivier~Yann}. Layer-wise learning of deep generative
+  models~// \BibEmph{arXiv preprint arXiv:1212.1524}. ---
+\newblock 2012.
+
+\bibitem{search_space}
+\selectlanguageifdefined{english}
+\BibEmph{Negrinho~Renato, Gordon~Geoff}. Deeparchitect: Automatically designing
+  and training deep architectures~// \BibEmph{arXiv preprint arXiv:1704.08792}.
+  ---
+\newblock 2017.
+
+\bibitem{self_rnn}
+\selectlanguageifdefined{english}
+\BibEmph{Schmidhuber~J{\"u}rgen}. A neural network that embeds its own
+  meta-levels~// Neural Networks, 1993., IEEE International Conference on~/
+  IEEE. ---
+\newblock 1993. ---
+\newblock Pp.~407--412.
+
+\bibitem{meta_sgd}
+\selectlanguageifdefined{english}
+Meta-SGD: Learning to Learn Quickly for Few Shot Learning~/ Zhenguo~Li,
+  Fengwei~Zhou, Fei~Chen, Hang~Li~// \BibEmph{arXiv preprint arXiv:1707.09835}.
+  ---
+\newblock 2017.
+
+\bibitem{l2l}
+\selectlanguageifdefined{english}
+\BibEmph{Wang~Yu-Xiong, Hebert~Martial}. Learning to learn: Model regression
+  networks for easy small sample learning~// European Conference on Computer
+  Vision~/ Springer. ---
+\newblock 2016. ---
+\newblock Pp.~616--634.
+
+\bibitem{l2l_by_gd_gd}
+\selectlanguageifdefined{english}
+Learning to learn by gradient descent by gradient descent~/
+  Marcin~Andrychowicz, Misha~Denil, Sergio~Gomez et~al.~// Advances in Neural
+  Information Processing Systems. ---
+\newblock 2016. ---
+\newblock Pp.~3981--3989.
+
+\bibitem{search_smbo}
+\selectlanguageifdefined{english}
+Progressive neural architecture search~/ Chenxi~Liu, Barret~Zoph,
+  Jonathon~Shlens et~al.~// \BibEmph{arXiv preprint arXiv:1712.00559}. ---
+\newblock 2017.
+
+\bibitem{optimal_racing}
+\selectlanguageifdefined{english}
+Toward Optimal Run Racing: Application to Deep Learning Calibration~/
+  Olivier~Bousquet, Sylvain~Gelly, Karol~Kurach et~al.~// \BibEmph{arXiv
+  preprint arXiv:1706.03199}. ---
+\newblock 2017.
+
+\bibitem{reinf}
+\selectlanguageifdefined{english}
+\BibEmph{Zoph~Barret, Le~Quoc~V}. Neural architecture search with reinforcement
+  learning~// \BibEmph{arXiv preprint arXiv:1611.01578}. ---
+\newblock 2016.
+
+\bibitem{reinf_predict}
+\selectlanguageifdefined{english}
+Accelerating neural architecture search using performance prediction~/
+  Bowen~Baker, Otkrist~Gupta, Ramesh~Raskar, Nikhil~Naik~// \BibEmph{CoRR,
+  abs/1705.10823}. ---
+\newblock 2017.
+
+\bibitem{reinf_transfer}
+\selectlanguageifdefined{english}
+Learning transferable architectures for scalable image recognition~/
+  Barret~Zoph, Vijay~Vasudevan, Jonathon~Shlens, Quoc~V~Le~// \BibEmph{arXiv
+  preprint arXiv:1707.07012}. ---
+\newblock 2017.
+
+\bibitem{reinf_deep2net}
+\selectlanguageifdefined{english}
+Efficient Architecture Search by Network Transformation~/ Han~Cai,
+  Tianyao~Chen, Weinan~Zhang et~al. ---
+\newblock 2018.
+
+\bibitem{obd}
+\selectlanguageifdefined{english}
+\BibEmph{Cun~Yann~Le, Denker~John~S., Solla~Sara~A.} Optimal Brain Damage~//
+  Advances in Neural Information Processing Systems. ---
+\newblock Morgan Kaufmann, 1990. ---
+\newblock Pp.~598--605.
+
+\bibitem{obs}
+\selectlanguageifdefined{english}
+\BibEmph{Hassibi~Babak, Stork~David~G, Wolff~Gregory~J}. Optimal brain surgeon
+  and general network pruning~// Neural Networks, 1993., IEEE International
+  Conference on~/ IEEE. ---
+\newblock 1993. ---
+\newblock Pp.~293--299.
+
+\bibitem{nips}
+\selectlanguageifdefined{english}
+\BibEmph{Graves~Alex}. Practical Variational Inference for Neural Networks~//
+  Advances in Neural Information Processing Systems 24~/ Ed. by
+  J.~Shawe-Taylor, R.~S.~Zemel, P.~L.~Bartlett et~al. ---
+\newblock Curran Associates, Inc., 2011. ---
+\newblock Pp.~2348--2356. \BibUrl{
+  http://papers.nips.cc/paper/4329-practical-variational-inference-for-neural-networks.pdf}.
+
+\bibitem{bayes_compr}
+\selectlanguageifdefined{english}
+\BibEmph{Louizos~Christos, Ullrich~Karen, Welling~Max}. Bayesian compression
+  for deep learning~// Advances in Neural Information Processing Systems. ---
+\newblock 2017. ---
+\newblock Pp.~3290--3300.
+
+\bibitem{nvidia_prune}
+\selectlanguageifdefined{english}
+Learning both Weights and Connections for Efficient Neural Network~/ Song~Han,
+  Jeff~Pool, John~Tran, William~Dally~// Advances in Neural Information
+  Processing Systems 28~/ Ed. by C.~Cortes, N.~D.~Lawrence, D.~D.~Lee et~al.
+  ---
+\newblock Curran Associates, Inc., 2015. ---
+\newblock Pp.~1135--1143. \BibUrl{
+  http://papers.nips.cc/paper/5784-learning-both-weights-and-connections-for-efficient-neural-network.pdf}.
+
+\bibitem{dropout}
+\selectlanguageifdefined{english}
+Dropout: A simple way to prevent neural networks from overfitting~/
+  Nitish~Srivastava, Geoffrey~Hinton, Alex~Krizhevsky et~al.~// \BibEmph{The
+  Journal of Machine Learning Research}. ---
+\newblock 2014. ---
+\newblock Vol.~15, no.~1. ---
+\newblock Pp.~1929--1958.
+
+\bibitem{weight_quantization}
+\selectlanguageifdefined{english}
+Incremental network quantization: Towards lossless cnns with low-precision
+  weights~/ Aojun~Zhou, Anbang~Yao, Yiwen~Guo et~al.~// \BibEmph{arXiv preprint
+  arXiv:1702.03044}. ---
+\newblock 2017.
+
+\bibitem{weight_quantization2}
+\selectlanguageifdefined{english}
+\BibEmph{Han~Song, Mao~Huizi, Dally~William~J}. Deep Compression: Compressing
+  Deep Neural Networks with Pruning, Trained Quantization and Huffman Coding~//
+  \BibEmph{arXiv preprint arXiv:1510.00149}. ---
+\newblock 2015.
+
+\bibitem{boost_res}
+\selectlanguageifdefined{english}
+Learning deep resnet blocks sequentially using boosting theory~/ Furong~Huang,
+  Jordan~Ash, John~Langford, Robert~Schapire~// \BibEmph{arXiv preprint
+  arXiv:1706.04964}. ---
+\newblock 2017.
+
+\bibitem{adanet}
+\selectlanguageifdefined{english}
+AdaNet: Adaptive Structural Learning of Artificial Neural Networks~/
+  Corinna~Cortes, Xavi~Gonzalvo, Vitaly~Kuznetsov et~al.~// \BibEmph{CoRR}. ---
+\newblock 2016. ---
+\newblock Vol. abs/1607.01097. \BibUrl{ http://arxiv.org/abs/1607.01097}.
+
+\bibitem{hyper}
+\selectlanguageifdefined{english}
+\BibEmph{Maclaurin~Dougal, Duvenaud~David, Adams~Ryan}. Gradient-based
+  Hyperparameter Optimization through Reversible Learning~// Proceedings of the
+  32nd International Conference on Machine Learning (ICML-15)~/ Ed. by
+  David~Blei, Francis~Bach. ---
+\newblock JMLR Workshop and Conference Proceedings, 2015. ---
+\newblock Pp.~2113--2122. \BibUrl{
+  http://jmlr.org/proceedings/papers/v37/maclaurin15.pdf}.
+
+\bibitem{MacKay}
+\selectlanguageifdefined{english}
+\BibEmph{MacKay~David J.~C.} Information Theory, Inference \& Learning
+  Algorithms. ---
+\newblock New York, NY, USA: Cambridge University Press, 2002.
+
+\bibitem{ard}
+\selectlanguageifdefined{english}
+\BibEmph{Karaletsos~Theofanis, R{\"a}tsch~Gunnar}. Automatic Relevance
+  Determination For Deep Generative Models~// \BibEmph{arXiv preprint
+  arXiv:1505.07765}. ---
+\newblock 2015.
+
+\bibitem{bo_gp}
+\selectlanguageifdefined{english}
+\BibEmph{Snoek~Jasper, Larochelle~Hugo, Adams~Ryan~P}. Practical bayesian
+  optimization of machine learning algorithms~// Advances in neural information
+  processing systems. ---
+\newblock 2012. ---
+\newblock Pp.~2951--2959.
+
+\bibitem{random_gaus}
+\selectlanguageifdefined{english}
+Bayesian Optimization in High Dimensions via Random Embeddings.~/ Ziyu~Wang,
+  Masrour~Zoghi, Frank~Hutter et~al.~// IJCAI. ---
+\newblock 2013. ---
+\newblock Pp.~1778--1784.
+
+\bibitem{gp_tree}
+\selectlanguageifdefined{english}
+Bayesian Optimization with Tree-structured Dependencies~/ Rodolphe~Jenatton,
+  Cedric~Archambeau, Javier~Gonz{\'a}lez, Matthias~Seeger~// International
+  Conference on Machine Learning. ---
+\newblock 2017. ---
+\newblock Pp.~1655--1664.
+
+\bibitem{rbf_surrogate}
+\selectlanguageifdefined{english}
+Hyperparameter optimization of deep neural networks using non-probabilistic RBF
+  surrogate model~/ Ilija~Ilievski, Taimoor~Akhtar, Jiashi~Feng,
+  Christine~Annette~Shoemaker~// \BibEmph{arXiv preprint arXiv:1607.08316}. ---
+\newblock 2016.
+
+\bibitem{snoek_deep}
+\selectlanguageifdefined{english}
+Scalable Bayesian Optimization Using Deep Neural Networks~/ Jasper~Snoek,
+  Oren~Rippel, Kevin~Swersky et~al.~// Proceedings of the 32nd International
+  Conference on Machine Learning~/ Ed. by Francis~Bach, David~Blei. ---
+\newblock Vol.~37 of \BibEmph{Proceedings of Machine Learning Research}. ---
+\newblock Lille, France: PMLR, 2015. --- 07--09 Jul. ---
+\newblock Pp.~2171--2180. \BibUrl{
+  http://proceedings.mlr.press/v37/snoek15.html}.
+
+\bibitem{gp_fusion}
+\selectlanguageifdefined{english}
+Structure Optimization for Deep Multimodal Fusion Networks using Graph-Induced
+  Kernels~/ Dhanesh~Ramachandram, Michal~Lisicki, Timothy~J~Shields et~al.~//
+  \BibEmph{arXiv preprint arXiv:1707.00750}. ---
+\newblock 2017.
+
+\bibitem{gp_arc}
+\selectlanguageifdefined{english}
+Raiders of the lost architecture: Kernels for Bayesian optimization in
+  conditional parameter spaces~/ Kevin~Swersky, David~Duvenaud, Jasper~Snoek
+  et~al.~// \BibEmph{arXiv preprint arXiv:1409.4011}. ---
+\newblock 2014.
+
+\bibitem{cib}
+\selectlanguageifdefined{english}
+\BibEmph{Adams~Ryan, Wallach~Hanna, Ghahramani~Zoubin}. Learning the structure
+  of deep sparse graphical models~// Proceedings of the Thirteenth
+  International Conference on Artificial Intelligence and Statistics. ---
+\newblock 2010. ---
+\newblock Pp.~1--8.
+
+\bibitem{cib_simple}
+\selectlanguageifdefined{english}
+\BibEmph{Feng~Jiashi, Darrell~Trevor}. Learning the structure of deep
+  convolutional networks~// Proceedings of the IEEE international conference on
+  computer vision. ---
+\newblock 2015. ---
+\newblock Pp.~2749--2757.
+
+\bibitem{shirakawa2018dynamic}
+\selectlanguageifdefined{english}
+\BibEmph{Shirakawa~Shinichi, Iwata~Yasushi, Akimoto~Youhei}. Dynamic
+  Optimization of Neural Network Structures Using Probabilistic Modeling~//
+  \BibEmph{arXiv preprint arXiv:1801.07650}. ---
+\newblock 2018.
+
+\end{thebibliography}
