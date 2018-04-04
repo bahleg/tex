@@ -1,0 +1,263 @@
+\documentclass[10pt,pdf,utf8,russian,aspectratio=169]{beamer}
+\usepackage[T2A]{fontenc}
+\usepackage[english,russian]{babel}
+\usepackage{subfig}
+\usepackage{graphicx}
+\usepackage{multicol}
+%
+% Choose how your presentation looks.
+%
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{Boadilla}      % or try Darmstadt, Madrid, Warsaw, ...
+  \usecolortheme{seagull} % or try albatross, beaver, crane, ..
+
+  \usefonttheme{structurebold}  % or try serif, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+} 
+
+\captionsetup[subfloat]{labelformat=empty}
+\title[Оптимизация гиперпараметров]{Оптимизация гиперпараметров градиентными методами}
+\author{Бахтеев Олег}
+\institute{МФТИ}
+\date{04.04.2018}
+%\renewcommand{\headrulewidth}{0pt}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+
+\begin{frame}{Градиентные методы: зачем?}
+\end{frame}
+
+\begin{frame}{Maclaurin et. al, 2015}
+\end{frame}
+
+
+
+\begin{frame}{Постановка задачи}
+Задана дифференцируемая по параметрам модель, приближающая зависимую переменную~$y$:
+\[
+	f:\mathbb{R}^n \to \mathbb{Y}, \quad \mathbf{w} \in \mathbb{R}^u.
+\]
+Функция $f$ задает правдоподобие выборки $\text{log}p(\mathbf{y}|\mathbf{X}, f)$. 
+
+Пусть также задано априорное распределение параметров: $$\mathbf{w} \sim \mathcal{N}(\mathbf{0}, \mathbf{A}^{-1}),$$
+где $\mathbf{A}^{-1} = \text{diag}[\alpha_1, \dots, \alpha_u]^{-1}$ --- матрица ковариаций диагонального вида, определеяемая \textit{гиперпараметрами} $[\alpha_1, \dots, \alpha_u]$.
+\end{frame}
+\begin{frame}{Кросс-валидация}
+Разобьем выборку $\mathfrak{D}$ на $k$ равных частей:
+\[
+\mathfrak{D} = \mathfrak{D}_1 \sqcup \dots \sqcup \mathfrak{D}_k.
+\]
+
+
+Запустим $k$ оптимизаций модели, каждую на своей части выборки. Положим $\boldsymbol{\theta} = [\mathbf{w}_1, \dots, \mathbf{w}_k]$, где $\mathbf{w}_1, \dots, \mathbf{w}_k$ --- параметры модели при оптимизации $k$.
+ 
+Пусть $L$ --- функция потерь:
+\begin{equation}
+\label{eq:cv}
+L(\boldsymbol{\theta}, \mathbf{h}) = -\frac{1}{k}\sum_{q=1}^k \bigl(\frac{k}{k-1}\text{log}p(\mathbf{y} \setminus \mathbf{y}_q|\mathbf{X}\setminus \mathbf{X}_q, \mathbf{w}_q) + \text{log}p(\mathbf{w}_q|\mathbf{A})\bigr).
+\end{equation}
+
+Пусть $Q$ --- функция качества модели:
+\[
+Q(\boldsymbol{\theta}, \mathbf{h}) = \frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathbf{y}_q|\mathbf{X}_q, \mathbf{w}_q).
+\]
+
+\end{frame}
+
+
+\begin{frame}{Формальная постановка задачи}
+Задана дифференцируемая по параметрам модель, приближающая зависимую переменную~$y$:
+\[
+	f:\mathbb{R}^n \to \mathbb{Y}, \quad \mathbf{w} \in \mathbb{R}^u.
+\]
+
+Пусть $\boldsymbol{\theta} \in \mathbb{R}^s$ --- множество всех оптимизируемых параметров.\\
+$L(\boldsymbol{\theta}, \mathbf{h})$ ---  дифференцируемая функция потерь  по которой производится оптимизация функции ${f}$. \\
+$Q(\boldsymbol{\theta}, \mathbf{h})$ ---  дифференцируемая функция определяющая итоговое качество модели ${f}$ и приближающая интеграл.\\
+
+Требуется найти параметры $\hat{\boldsymbol{\theta}}$ и гиперпараметры $\hat{\mathbf{h}}$ модели, доставляющие минимум следующему функционалу:
+\begin{equation}
+\label{eq:main}
+	\hat{\mathbf{h}} = \argmax_{\mathbf{h} \in \mathbb{R}^h} Q(\hat{\boldsymbol{\theta}}(\mathbf{h}), \mathbf{h}),
+\end{equation}
+\begin{equation}
+\label{eq:main2}
+	\hat{\boldsymbol{\theta}}(\mathbf{h}) =  \argmin_{\boldsymbol{\theta} \in \mathbb{R}^s} L(\boldsymbol{\theta}, \mathbf{h}).
+\end{equation}
+\end{frame}
+
+
+\begin{frame}{Байесовский вывод}
+\textit{Первый уровень:}
+\[
+\hat{\boldsymbol{\theta}} = \argmax \bigl(-L(\boldsymbol{\theta}, \mathbf{h})\bigr) = p(\mathbf{w}|\mathbf{X}, \mathbf{y}, \mathbf{A}) = \frac{p(\mathbf{y}|\mathbf{X},\mathbf{w})p(\mathbf{w}|\mathbf{A})}{p(\mathbf{y}|\mathbf{X},\mathbf{A})}.
+\]
+\textit{Второй уровень:}
+\[
+p(\mathbf{A}|\mathbf{X}, \mathbf{y}) \propto p(\mathbf{y}|\mathbf{X},\mathbf{A})p(\mathbf{A}),
+\]
+
+Полагая распределение параметров $p(\mathbf{A})$ равномерным на некоторой большой окрестности, получим задачу оптимизации гиперпараметров:
+\begin{equation}
+\label{eq:bayes2}
+	Q(\boldsymbol{\theta}, \mathbf{h}) = p(\mathbf{y}|\mathbf{X},\mathbf{A}) = \int_{\mathbf{w} \in \mathbb{R}^u} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) p(\mathbf{w}|\mathbf{A}) \to \max_{[\alpha_1, \dots, \alpha_u] \in \mathbb{R}^{n}}.
+\end{equation}
+\end{frame}
+
+\begin{frame}{Байесовый подход к сложности}
+Правдоподобие модели (``Evidence''):
+\[
+	p(\mathbf{y}|\mathbf{f}) = \int_\mathbf{w} p(\mathbf{y}|\mathbf{X},\mathbf{w})p(\mathbf{w}|\mathbf{A}) d\mathbf{w}.
+\]
+
+
+\begin{figure}
+  \centering
+  \subfloat[Схема выбора модели по правдоподобию]{\includegraphics[width=0.4\textwidth]{evidence.pdf}} 
+ \subfloat[Пример: полиномы]{\includegraphics[width=0.4\textwidth]{example.pdf}}
+\label{fig:1}\qquad
+
+\end{figure}
+
+
+\end{frame}
+
+
+\begin{frame}{Вариационная нижняя оценка}
+Пусть задано непрерывное распределение $q$. 
+Тогда 
+$$
+\text{log}~p(\mathbf{y}|\mathbf{X},\mathbf{w})  = \int_{\mathbf{w}} q(\mathbf{w})\text{log}~\frac{p(\mathbf{y},\mathbf{w}|\mathbf{X},\mathbf{A})}{q(\mathbf{w})}d\mathbf{w} + \text{D}_\text{KL}  (q(\mathbf{w})||p(\mathbf{w}| \mathbf{y}, \mathbf{X}, \mathbf{A})) \geq	
+$$
+$$
+\geq \int_{\mathbf{w}} q(\mathbf{w})\text{log}~\frac{p(\mathbf{y},  \mathbf{w}|\mathbf{X}, \mathbf{A})}{q(\mathbf{w})}d\mathbf{w} =
+$$
+
+$$
+= -\text{D}_\text{KL} (q(\mathbf{w})||p(\mathbf{w}|\mathbf{A})) + \int_{\mathbf{w}} q(\mathbf{w})\text{log}~{p(\mathbf{y}|\mathbf{X}, \mathbf{w},\mathbf{A})} d \mathbf{w},
+$$
+где $$\text{D}_\text{KL}(q(\mathbf{w})||p(\mathbf{w} |\mathbf{A})) = -\int_{\mathbf{w}} q(\mathbf{w})\text{log}~\frac{p(\mathbf{w} | \mathbf{A})}{q(\mathbf{w})}d\mathbf{w}.$$
+
+\end{frame}
+
+
+\begin{frame}{Evidence: нормальное распределение}
+\textbf{``Обычная'' функция потерь:}\\
+$$
+L = \textcolor{red}{\sum_{\mathbf{x}, \mathbf{y} \in \mathfrak{D}} - \text{log}p(\mathbf{y}|\mathbf{x}, \mathbf{w})} + \textcolor{blue}{\lambda||\mathbf{w}||_2^2}.
+$$\\~\\
+
+% если n - константна.
+\textbf{Вариационный вывод при $p(\mathbf{w}|\mathbf{f}) \sim \mathcal{N}(\mathbf{0}, \mathbf{1})$:}\\
+$$
+L =   \textcolor{red}{\sum_{\mathbf{x}, \mathbf{y} \in \mathfrak{D}} \text{log}~p(\mathbf{y}|\mathbf{x}, \hat{\mathbf{w}})} +
+ \textcolor{blue}{\frac{1}{2} \bigl( \text{tr} (\mathbf{A}^{-1}_q) + \boldsymbol{\mu}_q^\text{T}\mathbf{A}^{-1}\boldsymbol{\mu}_q  - \text{ln}~|\mathbf{A}^{-1}_q| \bigr)},
+$$\\$$\hat{\mathbf{w}} \sim q = \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q).$$~\\
+
+
+\end{frame}
+
+\begin{frame}{Вариационная оценка: оптимизация гиперпараметров}
+Пусть $L=-Q$:
+\begin{equation} 
+\label{eq:elbo}
+\text{log}~p(\mathbf{y}|\mathbf{X},\mathbf{A})  
+\geq 
+\sum_{\mathbf{x},y} \text{log}~p({y}|\mathbf{x}, \hat{\mathbf{w}}) - D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{A})\bigr) = -L(\boldsymbol{\theta}, \mathbf{h}) = Q((\boldsymbol{\theta}, \mathbf{h}),
+\end{equation}
+где $q$ --- нормальное распределение с диагональной матрицей ковариаций:
+\begin{equation}
+\label{eq:diag}
+	q \sim \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q),
+\end{equation}
+$$
+D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{f})\bigr) = \frac{1}{2} \bigl( \text{Tr} [\mathbf{A}\mathbf{A}^{-1}_q] + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^\mathsf{T}\mathbf{A}(\boldsymbol{\mu} - \boldsymbol{\mu}_q) - u +\text{ln}~|\mathbf{A}^{-1}| - \text{ln}~|\mathbf{A}_q^{-1}| \bigr).
+$$
+
+В качестве оптимизируемых параметров $\boldsymbol{\theta}$ выступают параметры распределения $q$:
+\[
+\boldsymbol{\theta} = [\alpha_1, \dots, \alpha_u, {\mu}_1,\dots,{\mu}_u].
+\]
+
+
+\end{frame}
+
+\begin{frame}{Жадная оптимизация гиперпараметров}
+\end{frame}
+
+\begin{frame}{DrMAD}
+\end{frame}
+
+\begin{frame}{HOAG}
+\end{frame}
+
+
+\begin{frame}
+\begin{figure}  
+\includegraphics[width=0.5\textwidth]{Fig_traj.eps}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Эксперименты: полиномы}
+\end{frame}
+
+\begin{frame}{Эксперименты: WISDM}
+\begin{figure}  
+\includegraphics[width=0.7\textwidth]{Fig_wisdm.eps}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Эксперименты: MNIST}
+\begin{figure}  
+\includegraphics[width=0.7\textwidth]{Fig_mnist.eps}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Эксперименты: MNIST}
+Добавление гауссового шума $\mathcal{N}(\mathbf{0},\sigma^2\mathbf{I})$:
+\setlength{\columnsep}{10pt}
+\begin{multicols}{4}
+\begin{figure}[h]
+\includegraphics[width=0.10\textwidth]{./mnist0.png}
+\caption*{Без шума}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[width=0.08\textwidth]{./mnist10.png}
+\caption*{$\sigma=0.1$}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[width=0.08\textwidth]{./mnist25.png}
+\caption*{$\sigma=0.25$}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[width=0.08\textwidth]{./mnist50.png}
+\caption*{$\sigma=0.5$}
+\end{figure}
+\end{multicols}
+\begin{center}
+\includegraphics[width=0.85\textwidth]{Fig_noise.pdf}
+\end{center}
+c\end{frame}
+
+\begin{frame}
+\frametitle{Используемые материалы}
+\end{frame}
+
+
+\end{document}
+
