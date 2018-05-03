@@ -1,10 +1,12 @@
 \documentclass[10pt,pdf,utf8,russian,aspectratio=169]{beamer}
 \usepackage[T2A]{fontenc}
 \usepackage[english,russian]{babel}
+\usepackage{cmap}
 \usepackage{subfig}
 \usepackage{graphicx}
 \usepackage{multicol}
 \usepackage{cancel}
+\usepackage{tabularx}
 %
 % Choose how your presentation looks.
 %
@@ -67,7 +69,7 @@
 Функция $f$ задает правдоподобие выборки $\text{log}p(\mathbf{y}|\mathbf{X}, f)$. 
 
 Пусть также задано априорное распределение параметров: $$\mathbf{w} \sim \mathcal{N}(\mathbf{0}, \mathbf{A}^{-1}),$$
-где $\mathbf{A}^{-1} = \text{diag}[\alpha_1, \dots, \alpha_u]^{-1}$ --- матрица ковариаций диагонального вида, определеяемая \textit{гиперпараметрами} $[\alpha_1, \dots, \alpha_u]$.
+где $\mathbf{A}^{-1} = \text{diag}[\alpha_1, \dots, \alpha_u]^{-1}$ --- матрица ковариаций диагонального вида, определяемая \textit{гиперпараметрами} $[\alpha_1, \dots, \alpha_u]$.
 \end{frame}
 \begin{frame}{Кросс-валидация}
 Разобьем выборку $\mathfrak{D}$ на $k$ равных частей:
@@ -81,12 +83,12 @@
 Пусть $L$ --- функция потерь:
 \begin{equation}
 \label{eq:cv}
-L(\boldsymbol{\theta}, \mathbf{h}) = -\frac{1}{k}\sum_{q=1}^k \bigl(\frac{k}{k-1}\text{log}p(\mathbf{y} \setminus \mathbf{y}_q|\mathbf{X}\setminus \mathbf{X}_q, \mathbf{w}_q) + \text{log}p(\mathbf{w}_q|\mathbf{A})\bigr).
+L(\boldsymbol{\theta}, \mathbf{A}^{-1}) = -\frac{1}{k}\sum_{q=1}^k \bigl(\frac{k}{k-1}\text{log}p(\mathbf{y} \setminus \mathbf{y}_q|\mathbf{X}\setminus \mathbf{X}_q, \mathbf{w}_q) + \text{log}p(\mathbf{w}_q|\mathbf{A})\bigr).
 \end{equation}
 
 Пусть $Q$ --- функция качества модели:
 \[
-Q(\boldsymbol{\theta}, \mathbf{h}) = \frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathbf{y}_q|\mathbf{X}_q, \mathbf{w}_q).
+Q(\boldsymbol{\theta}, \mathbf{A}^{-1}) = \frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathbf{y}_q|\mathbf{X}_q, \mathbf{w}_q).
 \]
 
 \end{frame}
@@ -99,22 +101,22 @@ Q(\boldsymbol{\theta}, \mathbf{h}) = \frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathb
 \]
 
 Пусть $\boldsymbol{\theta} \in \mathbb{R}^s$ --- множество всех оптимизируемых параметров.\\
-$L(\boldsymbol{\theta}, \mathbf{h})$ ---  дифференцируемая функция потерь  по которой производится оптимизация функции ${f}$. \\
-$Q(\boldsymbol{\theta}, \mathbf{h})$ ---  дифференцируемая функция определяющая итоговое качество модели ${f}$ и приближающая интеграл.\\
+$L(\boldsymbol{\theta}, \mathbf{A}^{-1})$ ---  дифференцируемая функция потерь  по которой производится оптимизация функции ${f}$. \\
+$Q(\boldsymbol{\theta}, \mathbf{A}^{-1})$ ---  дифференцируемая функция определяющая итоговое качество модели ${f}$ и приближающая интеграл.\\
 
-Требуется найти параметры $\hat{\boldsymbol{\theta}}$ и гиперпараметры $\hat{\mathbf{h}}$ модели, доставляющие минимум следующему функционалу:
+Требуется найти параметры $\hat{\boldsymbol{\theta}}$ и гиперпараметры $\hat{\mathbf{A}}^{-1}$ модели, доставляющие минимум следующему функционалу:
 \[
-\hat{\mathbf{h}} = \argmax_{\mathbf{h} \in \mathbb{R}^h} Q(\hat{\boldsymbol{\theta}}(\mathbf{h}), \mathbf{h}),
+\hat{\mathbf{A}}^{-1} = \argmax_{\mathbf{A}^{-1} \in \mathbb{R}^h} Q(\hat{\boldsymbol{\theta}}(\mathbf{A}^{-1}), \mathbf{A}^{-1}),
 \]
 \[
-	\hat{\boldsymbol{\theta}}(\mathbf{h}) =  \argmin_{\boldsymbol{\theta} \in \mathbb{R}^s} L(\boldsymbol{\theta}, \mathbf{h}).
+	\hat{\boldsymbol{\theta}}(\mathbf{A}^{-1}) =  \argmin_{\boldsymbol{\theta} \in \mathbb{R}^s} L(\boldsymbol{\theta}, \mathbf{A}^{-1}).
 \]
 \end{frame}
 \iffalse
 \begin{frame}{Байесовский вывод}
 \textit{Первый уровень:}
 \[
-\hat{\boldsymbol{\theta}} = \argmax \bigl(-L(\boldsymbol{\theta}, \mathbf{h})\bigr) = p(\mathbf{w}|\mathbf{X}, \mathbf{y}, \mathbf{A}) = \frac{p(\mathbf{y}|\mathbf{X},\mathbf{w})p(\mathbf{w}|\mathbf{A})}{p(\mathbf{y}|\mathbf{X},\mathbf{A})}.
+\hat{\boldsymbol{\theta}} = \argmax \bigl(-L(\boldsymbol{\theta}, \mathbf{A}^{-1})\bigr) = p(\mathbf{w}|\mathbf{X}, \mathbf{y}, \mathbf{A}) = \frac{p(\mathbf{y}|\mathbf{X},\mathbf{w})p(\mathbf{w}|\mathbf{A})}{p(\mathbf{y}|\mathbf{X},\mathbf{A})}.
 \]
 \textit{Второй уровень:}
 \[
@@ -124,12 +126,12 @@ p(\mathbf{A}|\mathbf{X}, \mathbf{y}) \propto p(\mathbf{y}|\mathbf{X},\mathbf{A})
 Полагая распределение параметров $p(\mathbf{A})$ равномерным на некоторой большой окрестности, получим задачу оптимизации гиперпараметров:
 \begin{equation}
 \label{eq:bayes2}
-	Q(\boldsymbol{\theta}, \mathbf{h}) = p(\mathbf{y}|\mathbf{X},\mathbf{A}) = \int_{\mathbf{w} \in \mathbb{R}^u} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) p(\mathbf{w}|\mathbf{A}) \to \max_{[\alpha_1, \dots, \alpha_u] \in \mathbb{R}^{n}}.
+	Q(\boldsymbol{\theta}, \mathbf{A}^{-1}) = p(\mathbf{y}|\mathbf{X},\mathbf{A}) = \int_{\mathbf{w} \in \mathbb{R}^u} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) p(\mathbf{w}|\mathbf{A}) \to \max_{[\alpha_1, \dots, \alpha_u] \in \mathbb{R}^{n}}.
 \end{equation}
 \end{frame}
 \fi
 
-\begin{frame}{Байесовый подход к сложности}
+\begin{frame}{Байесовский подход к сложности}
 Правдоподобие модели (``Evidence''):
 \[
 	p(\mathbf{y}|\mathbf{f}) = \int_\mathbf{w} p(\mathbf{y}|\mathbf{X},\mathbf{w})p(\mathbf{w}|\mathbf{A}) d\mathbf{w}.
@@ -176,7 +178,7 @@ $$\\~\\
 \textbf{Вариационный вывод при $p(\mathbf{w}|\mathbf{f}) \sim \mathcal{N}(\mathbf{0}, \mathbf{1})$:}\\
 $$
 L =   \textcolor{red}{\sum_{\mathbf{x}, \mathbf{y} \in \mathfrak{D}} \text{log}~p(\mathbf{y}|\mathbf{x}, \hat{\mathbf{w}})} +
- \textcolor{blue}{\frac{1}{2} \bigl( \text{tr} (\mathbf{A}^{-1}_q) + \boldsymbol{\mu}_q^\text{T}\mathbf{A}^{-1}\boldsymbol{\mu}_q  - \text{ln}~|\mathbf{A}^{-1}_q| \bigr)},
+ \textcolor{blue}{\frac{1}{2} \bigl( \text{tr} (\mathbf{A}^{-1}_q) + \boldsymbol{\mu}_q^\text{T}\mathbf{A}\boldsymbol{\mu}_q  - \text{ln}~|\mathbf{A}^{-1}_q| \bigr)},
 $$\\$$\hat{\mathbf{w}} \sim q = \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q).$$~\\
 
 
@@ -184,17 +186,17 @@ $$\\$$\hat{\mathbf{w}} \sim q = \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_
 
 \begin{frame}{Вариационная оценка: оптимизация гиперпараметров}
 Пусть $L=-Q$:
-\begin{equation} 
+\[
 \label{eq:elbo}
 \text{log}~p(\mathbf{y}|\mathbf{X},\mathbf{A})  
 \geq 
-\sum_{\mathbf{x},y} \text{log}~p({y}|\mathbf{x}, \hat{\mathbf{w}}) - D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{A})\bigr) = -L(\boldsymbol{\theta}, \mathbf{h}) = Q((\boldsymbol{\theta}, \mathbf{h}),
-\end{equation}
+\sum_{\mathbf{x},y} \text{log}~p({y}|\mathbf{x}, \hat{\mathbf{w}}) - D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{A})\bigr) = -L(\boldsymbol{\theta}, \mathbf{A}^{-1}) = Q(\boldsymbol{\theta}, \mathbf{A}^{-1}),
+\]
 где $q$ --- нормальное распределение с диагональной матрицей ковариаций:
-\begin{equation}
+\[
 \label{eq:diag}
 	q \sim \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q),
-\end{equation}
+\]
 $$
 D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{f})\bigr) = \frac{1}{2} \bigl( \text{Tr} [\mathbf{A}\mathbf{A}^{-1}_q] + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^\mathsf{T}\mathbf{A}(\boldsymbol{\mu} - \boldsymbol{\mu}_q) - u +\text{ln}~|\mathbf{A}^{-1}| - \text{ln}~|\mathbf{A}_q^{-1}| \bigr).
 $$
@@ -213,11 +215,11 @@ $$
 Оператором $T$ назовем оператор стохастического градиентного спуска, производящий $\eta$ шагов оптимизации:
 \begin{equation}
 \label{eq:gd}
-	 \hat{\boldsymbol{\theta}} = T \circ T \circ \dots \circ T(\boldsymbol{\theta}_0, \mathbf{h}) = T^\eta(\boldsymbol{\theta}_0, \mathbf{h}),
+	 \hat{\boldsymbol{\theta}} = T \circ T \circ \dots \circ T(\boldsymbol{\theta}_0, \mathbf{A}^{-1}) = T^\eta(\boldsymbol{\theta}_0, \mathbf{A}^{-1}),
 \end{equation}
 где 
 $$
-	T(\boldsymbol{\theta}, \mathbf{h}) =\boldsymbol{\theta} - \gamma \nabla L(\boldsymbol{\theta}, \mathbf{h})|_{\hat{\mathfrak{D}}}, 
+	T(\boldsymbol{\theta}, \mathbf{A}^{-1}) =\boldsymbol{\theta} - \gamma \nabla L(\boldsymbol{\theta}, \mathbf{A}^{-1})|_{\hat{\mathfrak{D}}}, 
 $$
 $\gamma$ --- длина шага градиентного спуска, $\boldsymbol{\theta}_0$ --- начальное значение параметров $\boldsymbol{\theta}$, $\hat{\mathfrak{D}}$ --- случайная подвыборка исходной выборки $\mathfrak{D}$.
 \end{block}
@@ -225,7 +227,7 @@ $\gamma$ --- длина шага градиентного спуска, $\boldsy
 
 Перепишем итоговую задачу оптимизации:
 \[
-	\hat{\mathbf{h}} = \argmax_{\mathbf{h} \in \mathbb{R}^h} Q( T^\eta(\boldsymbol{\theta}_0, \mathbf{h})),
+	\hat{\mathbf{A}}^{-1} = \argmax_{\mathbf{A}^{-1} \in \mathbb{R}^h} Q( T^\eta(\boldsymbol{\theta}_0, \mathbf{A}^{-1})),
 \]
 где $\boldsymbol{\theta}_0$ --- начальное значение параметров $\boldsymbol{\theta}$.
 
@@ -237,14 +239,14 @@ $\gamma$ --- длина шага градиентного спуска, $\boldsy
 \begin{columns}
 \begin{column}{0.5\textwidth}
 \begin{enumerate}
-\item Провести $\eta$ шагов оптимизации: $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0, \mathbf{h})$.
-\item Положим $\hat{\nabla} \mathbf{h} = \nabla_\mathbf{h} Q(\boldsymbol{\theta}, \mathbf{h}).$ 
+\item Провести $\eta$ шагов оптимизации: $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0, \mathbf{A}^{-1})$.
+\item Положим $\hat{\nabla} \mathbf{A}^{-1} = \nabla_\mathbf{A}^{-1} Q(\boldsymbol{\theta}, \mathbf{A}^{-1}).$ 
 \item Положим $d\mathbf{v} = \mathbf{0}.$
 \item Для $\tau = \eta \dots 1 $ повторить:
 \item $\boldsymbol{\theta}^{\tau-1} =  \boldsymbol{\theta}^{\tau} - \gamma\mathbf{v}^{\tau}.$
 \item $\mathbf{v}^{\tau-1} =\mathbf{v}^{\tau} + \gamma \hat{\nabla}_{\boldsymbol{\theta}}.$
 \item $d\mathbf{v} =  \gamma \hat{\nabla}_{\boldsymbol{\theta}}$.
-\item $\hat{\nabla} \mathbf{h} =  \hat{\nabla} \mathbf{h} - d\mathbf{v}\nabla_{\mathbf{h}} \nabla_{\boldsymbol{\theta}} Q$.
+\item $\hat{\nabla} \mathbf{A}^{-1} =  \hat{\nabla} \mathbf{A}^{-1} - d\mathbf{v}\nabla_{\mathbf{A}^{-1}} \nabla_{\boldsymbol{\theta}} Q$.
 \item $\hat{\nabla} \boldsymbol{\theta}  = \hat{\nabla} \boldsymbol{\theta}  - d\mathbf{v}\nabla_{\boldsymbol{\theta}} \nabla_{\boldsymbol{\theta}} Q$.
 \end{enumerate}
 \end{column}
@@ -258,33 +260,34 @@ $\gamma$ --- длина шага градиентного спуска, $\boldsy
 \end{columns}
 \end{frame}
 
+
 \begin{frame}{DrMAD}
 Алгоритм DrMad --- упрощенный RMAD. 
 Вводится предположение о линейности траектории обновления параметров $\boldsymbol{\theta}$.
 \begin{columns}
 \begin{column}{0.5\textwidth}
 \begin{enumerate}
-\item Провести $\eta$ шагов оптимизации: $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0, \mathbf{h})$.
-\item Положим $\hat{\nabla} \mathbf{h} = \nabla_\mathbf{h} Q(\boldsymbol{\theta}, \mathbf{h}).$ 
+\item Провести $\eta$ шагов оптимизации: $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0, \mathbf{A}^{-1})$.
+\item Положим $\hat{\nabla} \mathbf{A}^{-1} = \nabla_\mathbf{A}^{-1} Q(\boldsymbol{\theta}, \mathbf{A}^{-1}).$ 
 \item Положим $d\mathbf{v} = \mathbf{0}.$
 \item Для $\tau = \eta \dots 1 $ повторить:
 \item $\boldsymbol{\theta}^{\tau-1} =  \boldsymbol{\theta}^{\tau} - \gamma\mathbf{v}^{\tau}.$
 \item $\mathbf{v}^{\tau-1} =\mathbf{v}^{\tau} + \gamma \hat{\nabla}_{\boldsymbol{\theta}}.$
 \item $d\mathbf{v} =  \gamma \hat{\nabla}_{\boldsymbol{\theta}}$.
-\item $\hat{\nabla} \mathbf{h} =  \hat{\nabla} \mathbf{h} - d\mathbf{v}\nabla_{\mathbf{h}} \nabla_{\boldsymbol{\theta}} Q$.
+\item $\hat{\nabla} \mathbf{A}^{-1} =  \hat{\nabla} \mathbf{A}^{-1} - d\mathbf{v}\nabla_{\mathbf{A}^{-1}} \nabla_{\boldsymbol{\theta}} Q$.
 \item $\hat{\nabla} \boldsymbol{\theta}  = \hat{\nabla} \boldsymbol{\theta}  - d\mathbf{v}\nabla_{\boldsymbol{\theta}} \nabla_{\boldsymbol{\theta}} Q$.
 \end{enumerate}
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{enumerate}
-\item Провести $\eta$ шагов оптимизации: $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0, \mathbf{h})$.
-\item Положим $\hat{\nabla} \mathbf{h} = \nabla_\mathbf{h} Q(\boldsymbol{\theta}, \mathbf{h}).$ 
+\item Провести $\eta$ шагов оптимизации: $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0, \mathbf{A}^{-1})$.
+\item Положим $\hat{\nabla} \mathbf{A}^{-1} = \nabla_\mathbf{A}^{-1} Q(\boldsymbol{\theta}, \mathbf{A}^{-1}).$ 
 \item Положим $d\mathbf{v} = \mathbf{0}.$
 \item Для $\tau = \eta \dots 1 $ повторить:
 \item $\boldsymbol{\theta}^{\tau-1} = \boldsymbol{\theta}_0 + \frac{\tau-1}{\eta} \boldsymbol{\theta}^{\eta}.$
 \item ~
 \item $d\mathbf{v} =  \gamma \hat{\nabla}_{\boldsymbol{\theta}}$.
-\item $\hat{\nabla} \mathbf{h} =  \hat{\nabla} \mathbf{h} - d\mathbf{v}\nabla_{\mathbf{h}} \nabla_{\boldsymbol{\theta}} Q$.
+\item $\hat{\nabla} \mathbf{A}^{-1} =  \hat{\nabla} \mathbf{A}^{-1} - d\mathbf{v}\nabla_{\mathbf{A}^{-1}} \nabla_{\boldsymbol{\theta}} Q$.
 \item $\hat{\nabla} \boldsymbol{\theta}  = \hat{\nabla} \boldsymbol{\theta}  - d\mathbf{v}\nabla_{\boldsymbol{\theta}} \nabla_{\boldsymbol{\theta}} Q$.
 \end{enumerate}
 \end{column}
@@ -292,23 +295,24 @@ $\gamma$ --- длина шага градиентного спуска, $\boldsy
 \end{frame}
 
 
-\begin{frame}{Закрытая форма оптимизации параметров}
+
+\begin{frame}{Аналитическая формула оптимизации параметров}
 \textbf{Утверждение (Pedregosa, 2016).}\\
 Пусть $L$ --- дифференцируемая функция, такая что все стационарные точки $L$ являются локальными минимумами.
-Пусть также гессиан $\mathbf{H}$ функции потерь $L$ является обратимым в каждой стационарной точке.\\
+Пусть также гессиан $\mathbf{H}^{-1}$ функции потерь $L$ является обратимым в каждой стационарной точке.\\
 Тогда
 \[
 \nabla_{\mathbf{A}^{-1}}Q(T(\boldsymbol{\theta}_0), \mathbf{A}^{-1}) =  \nabla_{\mathbf{A}^{-1}}Q(\boldsymbol{\theta}^\eta, \mathbf{A}^{-1}) - \nabla_{\mathbf{A}^{-1}}\nabla_{\boldsymbol{\theta}} L(\boldsymbol{\theta}^\eta, \mathbf{A}^{-1})^\text{T}\mathbf{H}^{-1}\nabla_{\boldsymbol{\theta}}Q(\boldsymbol{\theta}^\eta, \mathbf{A}^{-1}).
 \]
 
-\textbf{Доказательство}\\
+\textbf{Схема доказательства}\\
 \begin{enumerate}
 \item Т.к. точка $\boldsymbol{\theta}^\eta$ стационарна, то $\nabla_{\boldsymbol{\theta}} L(\boldsymbol{\theta}^\eta, \mathbf{A}^{-1}) = 0$.
 \item Продифференцируем выражение по $\mathbf{A}^{-1}:$
 \[
-    \nabla_{\mathbf{A}^{-1}}\nabla_{\boldsymbol{\theta}} L(\boldsymbol{\theta}^\eta, \mathbf{A}^{-1} + \mathbf{H}\nabla_{\mathbf{A}^{-1}}T(\boldsymbol{\theta}_0).
+    \nabla_{\mathbf{A}^{-1}}\nabla_{\boldsymbol{\theta}} L(\boldsymbol{\theta}^\eta, \mathbf{A}^{-1} + \mathbf{A}^{-1}\nabla_{\mathbf{A}^{-1}}T(\boldsymbol{\theta}_0).
 \]
-\item По цепному правилу:
+\item По правилу дифференцирования сложной функции:
 \[
 \nabla_{\mathbf{A}^{-1}}Q(T(\boldsymbol{\theta}_0), \mathbf{A}^{-1}) =  \nabla_{\mathbf{A}^{-1}}Q(\boldsymbol{\theta}^\eta, \mathbf{A}^{-1})  + \nabla_{\mathbf{A}^{-1}}T(\boldsymbol{\theta}_0)^\text{T}\nabla_{\boldsymbol{\theta}}Q(\boldsymbol{\theta}^\eta, \mathbf{A}^{-1}).
 \]
@@ -316,39 +320,59 @@ $\gamma$ --- длина шага градиентного спуска, $\boldsy
 \end{enumerate}
 \end{frame}
 
+
 \begin{frame}{Жадная оптимизация гиперпараметров}
 На каждом шаге оптимизации параметров $\boldsymbol{\theta}$:
 \[
-	\mathbf{h}' = \mathbf{h} - \gamma_{\mathbf{h}} \nabla_{\mathbf{h}}  Q \bigl(T(\boldsymbol{\theta}, \mathbf{h}) , \mathbf{h}\bigr) = \mathbf{h} - \gamma_{\mathbf{h}} \nabla_{\mathbf{h}}  Q\bigl(\boldsymbol{\theta} - \gamma \nabla L(\boldsymbol{\theta}, \mathbf{h}), \mathbf{h})\bigr),
+	\mathbf{A}'^{-1} = \mathbf{A}^{-1} - \gamma_{\mathbf{A}^{-1}} \nabla_{\mathbf{A}^{-1}}  Q \bigl(T(\boldsymbol{\theta}, \mathbf{A}^{-1}) , \mathbf{A}^{-1}\bigr) = \mathbf{A}^{-1} - \gamma_{\mathbf{A}^{-1}} \nabla_{\mathbf{A}^{-1}}  Q\bigl(\boldsymbol{\theta} - \gamma \nabla L(\boldsymbol{\theta}, \mathbf{A}^{-1}), \mathbf{A}^{-1})\bigr),
 \]
-где $\gamma_{\mathbf{h}}$ --- длина шага оптимизации гиперпараметров.
+где $\gamma_{\mathbf{A}^{-1}}$ --- длина шага оптимизации гиперпараметров.
 
 \begin{itemize}
-\item Можно рассматривать как упрощение алгоритма RMAD, использующее только один элемент истории обнолвения параметров.
-\item Является приближением к решению закрытой формы в случае $\mathbf{H} \sim \mathbf{I}$.
+\item Можно рассматривать как упрощение алгоритма RMAD, использующее только один элемент истории обновления параметров.
+\item Является приближением к решению аналитической формуле в случае $\mathbf{H}^{-1} \sim \mathbf{I}$.
 \end{itemize}
 
 \end{frame}
 
 
 \begin{frame}{HOAG}
-Численное приближение закрытой формы:
+Численное приближение аналитической формулы:
  \[\nabla_{\mathbf{A}^{-1}}Q(\boldsymbol{\theta}^\eta, \mathbf{A}^{-1}) - \nabla_{\mathbf{A}^{-1}}\nabla_{\boldsymbol{\theta}} L(\boldsymbol{\theta}^\eta, \mathbf{A}^{-1})^\text{T}\mathbf{H}^{-1}\nabla_{\boldsymbol{\theta}}Q(\boldsymbol{\theta}^\eta, \mathbf{A}^{-1}).\]
 \begin{enumerate}
-\item Провести $\eta$ шагов оптимизации: $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0, \mathbf{h})$.
-\item Решить линейную систему для вектора $\boldsymbol{\lambda}$: $\mathbf{H}(\boldsymbol{\theta})\boldsymbol{\lambda} =  \nabla_{\boldsymbol{\theta}} Q(\boldsymbol{\theta}, \mathbf{h})$.
-\item Приближенное значение градиентов гиперпараметра вычисляется как: $\hat{\nabla}_{\mathbf{h}}Q = \nabla_{\mathbf{h}}Q(\boldsymbol{\theta}, \mathbf{h}) -\nabla_{\boldsymbol{\theta}, \mathbf{h}} L(\boldsymbol{\theta}, \mathbf{h})^T\boldsymbol{\lambda}$.
+\item Провести $\eta$ шагов оптимизации: $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0, \mathbf{A}^{-1})$.
+\item Решить линейную систему для вектора $\boldsymbol{\lambda}$: $\mathbf{H}^{-1}(\boldsymbol{\theta})\boldsymbol{\lambda} =  \nabla_{\boldsymbol{\theta}} Q(\boldsymbol{\theta}, \mathbf{A}^{-1})$.
+\item Приближенное значение градиентов гиперпараметра вычисляется как: $\hat{\nabla}_{\mathbf{A}^{-1}}Q = \nabla_{\mathbf{A}^{-1}}Q(\boldsymbol{\theta}, \mathbf{A}^{-1}) -\nabla_{\boldsymbol{\theta}, \mathbf{A}^{-1}} L(\boldsymbol{\theta}, \mathbf{A}^{-1})^T\boldsymbol{\lambda}$.
 \end{enumerate}
 
 Итоговое правило обновления:
 \[
 \label{eq:update_hyper}
-\mathbf{h}' = \mathbf{h} - \gamma_{\mathbf{h}} \hat{\nabla}_{\mathbf{h}}Q.
+\mathbf{A}'^{-1} = \mathbf{A}^{-1} - \gamma_{\mathbf{A}^{-1}} \hat{\nabla}_{\mathbf{A}^{-1}}Q.
 \]
 
 
 \end{frame}
 
+\begin{frame}{Сравнение алгоритмов}
+\begin{table}
+%\footnotesize
+% Алгоритм & Тип алгоритм & Время & Плюсы & Минусы 
+
+\begin{tabularx}{\textwidth}{|p{2cm}|X|X|}
+\hline
+\bf Алгоритм &  \bf + & \bf -  \\ \hline
+Random search & Легко реализовать & Проклятие размерности  \\ \hline
+Жадная оптимизация & Оптимизация проводится внутри цикла оптимизации параметров. Легко реализовать & Жадность, неоптимальность. \\ \hline
+HOAG  & Быстрая сходимость.  & Качество результатов зависит от решения линейного уравнения $\mathbf{H}^{-1}(\boldsymbol{\theta})\boldsymbol{\lambda} =  \nabla_{\boldsymbol{\theta}} Q(\boldsymbol{\theta}, \mathbf{A}^{-1})$.\\ \hline 
+DrMAD  & Учитывает особенности оператора оптимизации. Можно использовать для оптимизации мета-параметров.& Неустойчив при больших значениях длины градиентного шага $\gamma_\mathbf{A}^{-1}$. Качество оптимизации зависит от кривизны траектории обновления параметров.\\ \hline
+\end{tabularx}
+
+
+\label{table:algo_descr}
+
+\end{table}
+\end{frame}
 
 \begin{frame}
 \begin{figure}  
