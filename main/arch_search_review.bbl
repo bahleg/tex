@@ -7,6 +7,47 @@
 \ifx\undefined\BibAnnote\long\def\BibAnnote#1{}\else\fi
 \ifx\undefined\BibEmph\def\BibEmph#1{\emph{#1}}\else\fi
 
+\bibitem{snoek_deep}
+\selectlanguageifdefined{english}
+Scalable Bayesian Optimization Using Deep Neural Networks~/ Jasper~Snoek,
+  Oren~Rippel, Kevin~Swersky et~al.~// Proceedings of the 32nd International
+  Conference on Machine Learning~/ Ed. by Francis~Bach, David~Blei. ---
+\newblock Vol.~37 of \BibEmph{Proceedings of Machine Learning Research}. ---
+\newblock Lille, France: PMLR, 2015. --- 07--09 Jul. ---
+\newblock Pp.~2171--2180. \BibUrl{
+  http://proceedings.mlr.press/v37/snoek15.html}.
+
+\bibitem{rbf_surrogate}
+\selectlanguageifdefined{english}
+Hyperparameter optimization of deep neural networks using non-probabilistic RBF
+  surrogate model~/ Ilija~Ilievski, Taimoor~Akhtar, Jiashi~Feng,
+  Christine~Annette~Shoemaker~// \BibEmph{arXiv preprint arXiv:1607.08316}. ---
+\newblock 2016.
+
+\bibitem{bo_gp}
+\selectlanguageifdefined{english}
+\BibEmph{Snoek~Jasper, Larochelle~Hugo, Adams~Ryan~P}. Practical bayesian
+  optimization of machine learning algorithms~// Advances in neural information
+  processing systems. ---
+\newblock 2012. ---
+\newblock Pp.~2951--2959.
+
+\bibitem{feature_select}
+\selectlanguageifdefined{english}
+\BibEmph{Li~Jundong, Liu~Huan}. Challenges of feature selection for big data
+  analytics~// \BibEmph{IEEE Intelligent Systems}. ---
+\newblock 2017. ---
+\newblock Vol.~32, no.~2. ---
+\newblock Pp.~9--15.
+
+\bibitem{metalearn}
+\selectlanguageifdefined{english}
+\BibEmph{Schmidhuber~Juergen, Zhao~Jieyu, Wiering~MA}. Simple principles of
+  metalearning~// \BibEmph{Technical report IDSIA}. ---
+\newblock 1996. ---
+\newblock Vol.~69. ---
+\newblock Pp.~1--23.
+
 \bibitem{layerwise_optimal}
 \selectlanguageifdefined{english}
 \BibEmph{Arnold~Ludovic, Ollivier~Yann}. Layer-wise learning of deep generative
@@ -161,13 +202,6 @@ Learning deep resnet blocks sequentially using boosting theory~/ Furong~Huang,
   arXiv:1706.04964}. ---
 \newblock 2017.
 
-\bibitem{adanet}
-\selectlanguageifdefined{english}
-AdaNet: Adaptive Structural Learning of Artificial Neural Networks~/
-  Corinna~Cortes, Xavi~Gonzalvo, Vitaly~Kuznetsov et~al.~// \BibEmph{CoRR}. ---
-\newblock 2016. ---
-\newblock Vol. abs/1607.01097. \BibUrl{ http://arxiv.org/abs/1607.01097}.
-
 \bibitem{hyper}
 \selectlanguageifdefined{english}
 \BibEmph{Maclaurin~Dougal, Duvenaud~David, Adams~Ryan}. Gradient-based
@@ -191,14 +225,6 @@ AdaNet: Adaptive Structural Learning of Artificial Neural Networks~/
   arXiv:1505.07765}. ---
 \newblock 2015.
 
-\bibitem{bo_gp}
-\selectlanguageifdefined{english}
-\BibEmph{Snoek~Jasper, Larochelle~Hugo, Adams~Ryan~P}. Practical bayesian
-  optimization of machine learning algorithms~// Advances in neural information
-  processing systems. ---
-\newblock 2012. ---
-\newblock Pp.~2951--2959.
-
 \bibitem{random_gaus}
 \selectlanguageifdefined{english}
 Bayesian Optimization in High Dimensions via Random Embeddings.~/ Ziyu~Wang,
@@ -213,23 +239,6 @@ Bayesian Optimization with Tree-structured Dependencies~/ Rodolphe~Jenatton,
   Conference on Machine Learning. ---
 \newblock 2017. ---
 \newblock Pp.~1655--1664.
-
-\bibitem{rbf_surrogate}
-\selectlanguageifdefined{english}
-Hyperparameter optimization of deep neural networks using non-probabilistic RBF
-  surrogate model~/ Ilija~Ilievski, Taimoor~Akhtar, Jiashi~Feng,
-  Christine~Annette~Shoemaker~// \BibEmph{arXiv preprint arXiv:1607.08316}. ---
-\newblock 2016.
-
-\bibitem{snoek_deep}
-\selectlanguageifdefined{english}
-Scalable Bayesian Optimization Using Deep Neural Networks~/ Jasper~Snoek,
-  Oren~Rippel, Kevin~Swersky et~al.~// Proceedings of the 32nd International
-  Conference on Machine Learning~/ Ed. by Francis~Bach, David~Blei. ---
-\newblock Vol.~37 of \BibEmph{Proceedings of Machine Learning Research}. ---
-\newblock Lille, France: PMLR, 2015. --- 07--09 Jul. ---
-\newblock Pp.~2171--2180. \BibUrl{
-  http://proceedings.mlr.press/v37/snoek15.html}.
 
 \bibitem{gp_fusion}
 \selectlanguageifdefined{english}
@@ -267,5 +276,122 @@ Raiders of the lost architecture: Kernels for Bayesian optimization in
   Optimization of Neural Network Structures Using Probabilistic Modeling~//
   \BibEmph{arXiv preprint arXiv:1801.07650}. ---
 \newblock 2018.
+
+\bibitem{Kingma}
+\selectlanguageifdefined{english}
+Semi-supervised Learning with Deep Generative Models~/ Diederik~P~Kingma,
+  Shakir~Mohamed, Danilo~Jimenez~Rezende, Max~Welling~// Advances in Neural
+  Information Processing Systems 27~/ Ed. by Z.~Ghahramani, M.~Welling,
+  C.~Cortes et~al. ---
+\newblock Curran Associates, Inc., 2014. ---
+\newblock Pp.~3581--3589. \BibUrl{
+  http://papers.nips.cc/paper/5352-semi-supervised-learning-with-deep-generative-models.pdf}.
+
+\bibitem{vae_graph}
+\selectlanguageifdefined{english}
+Composing graphical models with neural networks for structured representations
+  and fast inference~/ Matthew~Johnson, David~K~Duvenaud, Alex~Wiltschko
+  et~al.~// Advances in neural information processing systems. ---
+\newblock 2016. ---
+\newblock Pp.~2946--2954.
+
+\bibitem{vae_stick}
+\selectlanguageifdefined{english}
+\BibEmph{Nalisnick~Eric, Smyth~Padhraic}. Deep Generative Models with
+  Stick-Breaking Priors~// \BibEmph{arXiv preprint arXiv:1605.06197}. ---
+\newblock 2016.
+
+\bibitem{vae_mix}
+\selectlanguageifdefined{english}
+\BibEmph{Abbasnejad~M~Ehsan, Dick~Anthony, van~den Hengel~Anton}. Infinite
+  variational autoencoder for semi-supervised learning~// 2017 IEEE Conference
+  on Computer Vision and Pattern Recognition (CVPR)~/ IEEE. ---
+\newblock 2017. ---
+\newblock Pp.~781--790.
+
+\bibitem{var_boost}
+\selectlanguageifdefined{english}
+\BibEmph{{Miller}~A.~C., {Foti}~N., {Adams}~R.~P.} {Variational Boosting:
+  Iteratively Refining Posterior Approximations}~// \BibEmph{ArXiv e-prints}.
+  ---
+\newblock 2016. --- nov.
+
+\bibitem{jaakkola2010learning}
+\selectlanguageifdefined{english}
+Learning Bayesian network structure using LP relaxations~/ Tommi~Jaakkola,
+  David~Sontag, Amir~Globerson, Marina~Meila~// Proceedings of the Thirteenth
+  International Conference on Artificial Intelligence and Statistics. ---
+\newblock 2010. ---
+\newblock Pp.~358--365.
+
+\bibitem{double_rnn}
+\selectlanguageifdefined{english}
+\BibEmph{Alvarez-Melis~David, Jaakkola~Tommi~S}. Tree-structured decoding with
+  doubly-recurrent neural networks. ---
+\newblock 2016.
+
+\bibitem{layer_probe}
+\selectlanguageifdefined{english}
+\BibEmph{Alain~Guillaume, Bengio~Yoshua}. Understanding intermediate layers
+  using linear classifier probes~// \BibEmph{arXiv preprint arXiv:1610.01644}.
+  ---
+\newblock 2016.
+
+\bibitem{branches}
+\selectlanguageifdefined{english}
+\BibEmph{Teerapittayanon~Surat, McDanel~Bradley, Kung~HT}. Branchynet: Fast
+  inference via early exiting from deep neural networks~// Pattern Recognition
+  (ICPR), 2016 23rd International Conference on~/ IEEE. ---
+\newblock 2016. ---
+\newblock Pp.~2464--2469.
+
+\bibitem{mixed}
+\selectlanguageifdefined{english}
+\BibEmph{Friesen~Abram~L, Domingos~Pedro}. Deep Learning as a Mixed
+  Convex-Combinatorial Optimization Problem~// \BibEmph{arXiv preprint
+  arXiv:1710.11573}. ---
+\newblock 2017.
+
+\bibitem{energynet}
+\selectlanguageifdefined{english}
+\BibEmph{Kristiansen~Gus, Gonzalvo~Xavi}. EnergyNet: Energy-based Adaptive
+  Structural Learning of Artificial Neural Network Architectures~//
+  \BibEmph{arXiv preprint arXiv:1711.03130}. ---
+\newblock 2017.
+
+\bibitem{pathnet}
+\selectlanguageifdefined{english}
+Pathnet: Evolution channels gradient descent in super neural networks~/
+  Chrisantha~Fernando, Dylan~Banarse, Charles~Blundell et~al.~// \BibEmph{arXiv
+  preprint arXiv:1701.08734}. ---
+\newblock 2017.
+
+\bibitem{supernet}
+\selectlanguageifdefined{english}
+\BibEmph{Veniat~Tom, Denoyer~Ludovic}. Learning time-efficient deep
+  architectures with budgeted super networks~// \BibEmph{arXiv preprint
+  arXiv:1706.00046}. ---
+\newblock 2017.
+
+\bibitem{net2net}
+\selectlanguageifdefined{english}
+\BibEmph{Chen~Tianqi, Goodfellow~Ian, Shlens~Jonathon}. Net2net: Accelerating
+  learning via knowledge transfer~// \BibEmph{arXiv preprint arXiv:1511.05641}.
+  ---
+\newblock 2015.
+
+\bibitem{morph}
+\selectlanguageifdefined{english}
+Forward thinking: Building and training neural networks one layer at a time~/
+  Chris~Hettinger, Tanner~Christensen, Ben~Ehlert et~al.~// \BibEmph{arXiv
+  preprint arXiv:1706.02480}. ---
+\newblock 2017.
+
+\bibitem{partition}
+\selectlanguageifdefined{english}
+\BibEmph{Miranda~Conrado~S, Von~Zuben~Fernando~J}. Reducing the Training Time
+  of Neural Networks by Partitioning~// \BibEmph{arXiv preprint
+  arXiv:1511.02954}. ---
+\newblock 2015.
 
 \end{thebibliography}
