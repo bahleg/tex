@@ -1,8 +1,10 @@
 \documentclass[12pt]{article}
 \usepackage[utf8]{inputenc}
+\usepackage{cmap}
 \usepackage[T2A]{fontenc}
 
-\usepackage{cmap}
+
+
 \usepackage{amssymb,amsfonts,amsthm,amsmath,mathtext,cite,enumerate,float}
 \usepackage[russian, english]{babel}
 \usepackage{graphicx}
@@ -36,7 +38,7 @@
 \DeclareMathOperator*{\argmax}{arg\,max}
 \begin{document}
 \section{Цели работы}
-Основная цель работы --- предложить метод поиска оптимальной структуры модели на основе байесовского вывода.
+Основная цель работы --- предложить метод выбора оптимальной структуры модели на основе байесовского вывода.
 Предполагается, что предложенный метод будет работать не хуже существующих невероятностных методов (в плане accuracy наиболее вероятных параметров).
 При этом такая модель будет более устойчива к возмущениям параметров/объектов, а также будет позволять прореживать блоки параметров на основании вероятностных оценок, полученных при поиске структуры.
 
@@ -89,7 +91,24 @@
 Ковариация параметров & $\mathbf{A}^{-1}$ & $\mathbb{R}^n$ & Определяет prior для параметров & $\mathbf{W}$ \\ \hline
 Концентрация & $\alpha$  & $\mathbb{R}$ & Определяет prior для структуры & $\boldsymbol{\Gamma}$ \\ \hline
  
+\multicolumn{5}{c}{Вариационный вывод}\\\hline
+\bf Что & \bf Обозна- чение & \bf Простр. & \bf Что делает & \bf С чем связано  \\ \hline \hline
+Вариационное распределение параметров модели & $q_\mathbf{w}$ &  - & Аппроксимирует апостериорное распределение & $\mathbf{A}^Q, \boldsymbol{\mu}$ \\ \hline
+Среднее распределения параметров & $\boldsymbol{\mu}$ & - & - & $\mathbf{A}^Q, q_\mathbf{w}$ \\ \hline
+Вариационное распределение параметров структуры & $q_\gamma$ & - & Аппроксимирует апостериорное распределение & $\mathbf{g}, \tau$ \\ \hline
+Параметры распределения гумбель-софтмакс & $\mathbf{g}$ & - & - & $q_\gamma$ \\ \hline
+Параметр температуры гумбель-софтмакс & $\tau$ & - & - & $q_\gamma$ \\ \hline
+
+\multicolumn{5}{c}{Оптимизация}\\\hline
+Функция потерь & $L$ &-& Оптимизируемая функция & $Q, \boldsymbol{\theta}, T$ \\ \hline 
+Функция валидации & $Q$ & - & Оптимизируемая по гиперпараметрам функция & $L, \mathbf{h}, T$\\ \hline
+Оптимизируемые параметры & $\boldsymbol{\theta}$ & - & - & $L, T$ \\ \hline
+Оптимизируемые гиперпараметры & $\mathbf{h}$ & - & - &  $Q, T$ \\ \hline
+Оператор оптимизации & $T$ & - & - &$L,Q$ \\ \hline
+Количество итераций & $\eta$ & - & - & $T$ \\ \hline
+
 \end{tabularx}
+
 \end{table}
 \clearpage
 \begin{figure}[TBPH!]
@@ -143,95 +162,52 @@
 \]
 
 \newpage
-\section{Нерешенные вопросы}
-\begin{enumerate}
-\item В работе Zoph et al. структуры оптимизируется с ограничением, что сеть является цепочкой повторяемых подмоделей. Таким образом, уменьшается количество возможных вариантов оптимизации и затраты по ресурами. В данной версии постановки задачи ограничений нет.
-\item Кто отвечает за оптимизацию гиперпараметра $\alpha$. Кажется, что он должен быть фиксированным, но это противоречит байесовскому подходу.
-\item Как регуляризовать путь оптимизации параметров.
-\item Накладываем ли мы ограничения на степень вершин вычислительного графа?
-\item Возможно потербуется как-то учитывать те параметры, которые не вошли в итоговый граф.
-\end{enumerate}
-\iffalse
+
 \section{Вариационный вывод}
-Пусть задано некоторое параметрическое семейство распределений $Q.$
-{В качестве функции, приближающей логарифм интеграла~\eqref{eq:evidence}, будем рассматривать его нижнюю оценку, полученную при помощи неравенства Йенсена~\cite{Bishop} при фиксированном значении $q \in Q$. Получим нижнюю оценку логарифма правдоподобия модели, используя неравенство}
-\begin{equation} 
-\label{eq:elbo}
-\textnormal{log}~p(\mathbf{y}|\mathbf{X},\mathbf{A},\boldsymbol{\Gamma})  = \int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~\frac{p(\mathbf{y},\mathbf{w}|\mathbf{X},\mathbf{A},\boldsymbol{\Gamma})}{q(\mathbf{w})}d\mathbf{w} + \textnormal{D}_\textnormal{KL}  \bigl(q(\mathbf{w})||p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{f})\bigr) \geq	
-\end{equation} 
+Введем два аппроксимирующих параметрических распределения: 
 $$
-\geq \int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~\frac{p(\mathbf{y},\mathbf{w}|\mathbf{X},\mathbf{A},\boldsymbol{\Gamma})}{q(\mathbf{w})}d\mathbf{w} =
+q_\mathbf{w} \sim \mathcal{N}(\boldsymbol{\mu}, \mathbf{A}_q^{-1}) \approx p(\mathbf{W}|\mathbf{X}, \mathbf{y}, \mathbf{A}, \boldsymbol{\Gamma}),
+$$
+$$
+q_\gamma \sim \text{Gumbel-Softmax}(\mathbf{g}) \approx p(\boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{A}, \alpha).
 $$
 
-$$
-= -\textnormal{D}_\textnormal{KL} \bigl(q(\mathbf{w})||p(\mathbf{w}|\mathbf{f})\bigr) + \int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~{p(\mathbf{y}|\mathbf{X},\mathbf{w},\mathbf{A},\boldsymbol{\Gamma})} d \mathbf{w},
-$$
-где $\textnormal{D}_\textnormal{KL}\bigl(q(\mathbf{w})||p(\mathbf{w} |\mathbf{f})\bigr)$ --- расстояние Кульбака--Лейблера между двумя распределениями: $$\textnormal{D}_\textnormal{KL}\bigl(q(\mathbf{w})||p(\mathbf{w} |\mathbf{f})\bigr) = -\int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~\frac{p(\mathbf{w} | \mathbf{f})}{q(\mathbf{w})}d\mathbf{w},$$
-$$
-p(\mathbf{y},\mathbf{w}|\mathbf{X},\mathbf{A},\boldsymbol{\Gamma}) = p(\mathbf{y}|\mathbf{X},\mathbf{A},\boldsymbol{\Gamma})p(\mathbf{w}|\mathbf{f}).
-$$
-
-В качестве множества $Q = \{q(\mathbf{w})\}$ задано параметрическое семейство нормальных распределений с диагональными матрицами ковариаций:
-\begin{equation}
-\label{eq:diag}
-	q \sim \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q),
-\end{equation}
-где $\mathbf{A}_q$ --- диагональная матрица ковариаций, $\boldsymbol{\mu}_q$ --- вектор средних компонент.
-
-
-Тогда оптимизация имеет вид
-\begin{equation}
-\label{eq:norm_max}
- \int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~{p(\mathbf{y}|\mathbf{X},\mathbf{w},\mathbf{A},\boldsymbol{\Gamma})} d \mathbf{w} - D_\textnormal{KL}\bigl(q (\mathbf{w} )|| p (\mathbf{w}|\mathbf{f})\bigr) \to \max_{\mathbf{A}_q, \boldsymbol{\mu}_q},
-\end{equation}
-где расстояние $D_\textnormal{KL}$ между двумя гауссовыми величинами рассчитывается как 
+Пусть $L$ --- вариационная оценка правдоподобия:
 \[
-	D_\textnormal{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{f})\bigr) = \frac{1}{2} \bigl( \textnormal{Tr} [\mathbf{A}\mathbf{A}^{-1}_q] + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^\mathsf{T}\mathbf{A}(\boldsymbol{\mu} - \boldsymbol{\mu}_q) - u +\textnormal{ln}~|\mathbf{A}^{-1}| - \textnormal{ln}~|\mathbf{A}_q^{-1}| \bigr).
+    L = \text{log} p(\mathbf{y}|\hat{\mathbf{W}}, \hat{(\boldsymbol{\Gamma}}) - \text{KLD}(q_\gamma||p(\boldsymbol{\Gamma})) - \text{KLD}(q_\mathbf{W}||p(\mathbf{W})).
 \]
-В качестве приближенного значения интеграла $$\int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~{p(\mathbf{y}|\mathbf{X},\mathbf{w},\mathbf{A},\boldsymbol{\Gamma})} d \mathbf{w}$$ предлагается использовать формулу
-\[
-\int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~{p(\mathbf{y}|\mathbf{X},\mathbf{w},\mathbf{A},\boldsymbol{\Gamma})} d \mathbf{w} \approx \sum_{i=1}^m \textnormal{log}~p({y}_i|\mathbf{x}_i, \mathbf{w}_i),
-\]
-где $\mathbf{w}_i$  --- реализация случайной величины из распределения $q(\mathbf{w})$.
 
-Для аппроксимации вектора случайных величин $\boldsymbol{\Gamma}$ будем использовать распределение Gumbel-softmax:
-\[
-    q_\mathbf{g} = \frac{\text{exp}(\text{log}(g_i) + G_i)/\tau)}{\sum_{j=1}^{|O|}\text{exp}(\text{log}(g_j) + G_j)/\tau)},
-\]
-где $G$ --- вектор случайных величин, распределенных по распределению Гумбеля, $\tau$ --- регуляриземый гиперпараметр.
-
-
-Итоговая функция оптимизации имеет вид
-\[
-	L = -\sum_{i=1}^m \textnormal{log}~p({y}_i|\mathbf{x}_i, \hat{\mathbf{W}}, \hat{\mathbf{G}}) + 
-\]
-\[
-+\frac{1}{2} \bigl( \textnormal{Tr} [\mathbf{A}\mathbf{A}^{-1}_q] + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^\mathsf{T}\mathbf{A}(\boldsymbol{\mu} - \boldsymbol{\mu}_q) - u +\textnormal{ln}~|\mathbf{A}^{-1}| - \textnormal{ln}~|\mathbf{A}_q^{-1}| \bigr) -D_\textnormal{KL}\bigl(\mathbf{G} || \boldsymbol{\Gamma})\bigr) \to \argmin,
-\]
-где $\hat{\mathbf{W}} \sim q_\mathbf{w}$, $\hat{\mathbf{G}} \sim q_\mathbf{g}$.
-
-
-Определим внешнюю функцию Q. Варианты:
+Пусть $Q$ --- потеря на валидации. Требования к функции:
 \begin{enumerate}
-\item $Q = L$.
-\item ошибка на валидации.
-\item Регуляризация температур
-\item Регуляризатор пути (???)
+\item Должна не противоречить максимизации ELBO.
+\item Максимизация $Q$ должна вести к минимизации концентрации $\alpha$.
+\item Слагаемое a_KL - поощряет сложность
+\item Слагаемое D_KL(Q||P) для каждого шага - поощряет поиск новы структур
 \end{enumerate}
 
+Итого:
+\begin{enumerate}
+\item Хотим Add-Del: варьируем a_KL
+\item Хотим честный sgd --- отключаем все
+\item Хотим полный переор --- D_KL(Q||P)
+\item Хотим ЛАссо --- фиксируем прайар
+\item Хотим генетику --- видимо переходим к Ланжевену
+\end{enumerate}
 
-Пусть $\boldsymbol{\theta}$ --- параметры распределений $q\mathbf{w}$ и $q_\mathbf{g}$:
+Пусть $\boldsymbol{\theta}$ --- параметры распределений $q_\mathbf{w}$ и $q_\gamma$:
 \[
     \boldsymbol{\theta} = [\boldsymbol{\mu}, \mathbf{A}_q^{-1}, \mathbf{g}].
 \] 
 
 Пусть $\mathbf{h}$ --- параметры априорных распределений, а также гиперпараметры распределений  $q\mathbf{w}$ и $q_\mathbf{g}$:
 \[
-    \mathbf{h} = [\mathbf{A}, \alpha, \tau.
+    \mathbf{h} = [\mathbf{A}, \alpha, \tau],
 \]
+где $\tau$ --- температура Гумбель-софтмакс распределения.
 
 
-Сформулируем задачу поиска оптимальной модели как двууровневую задачу.
+
+Сформулируем задачу поиска оптимальной модели как двухуровневую задачу.
 \begin{equation}
 \label{eq:optim}
 	\hat{\mathbf{h}} = \argmax_{\mathbf{h} \in \mathbb{R}^h} Q( T^\eta(\boldsymbol{\theta}_0, \mathbf{h})),
@@ -241,12 +217,14 @@ $$
     L(T^\eta(\boldsymbol{\theta}_0, \mathbf{h})) \to \min.
 \]
 
-\textbf{Проблема}
-Двойная оптимизация, которая была рассмотрена в предыдущей работе свелась к обычной задаче оптимизации:
-\[
-    \boldsymbol{\theta} = \argmax L, \quad  \mathbf{h} = \argmax{Q}(\boldsymbol{\theta}). 
-\]
-при $Q = L$.\\
-http://www.jmlr.org/papers/volume18/17-214/17-214.pdf (page 13, 4.2)
-\fi
+https://arxiv.org/pdf/1704.03003.pdf
+
+\section{Нерешенные вопросы}
+\begin{enumerate}
+\item В работе Zoph et al. структуры оптимизируется с ограничением, что сеть является цепочкой повторяемых подмоделей. Таким образом, уменьшается количество возможных вариантов оптимизации и затраты по ресурами. В данной версии постановки задачи ограничений нет.
+\item Кто отвечает за оптимизацию гиперпараметра $\alpha$. Кажется, что он должен быть фиксированным, но это противоречит байесовскому подходу.
+\item Как регуляризовать путь оптимизации параметров.
+\item Накладываем ли мы ограничения на степень вершин вычислительного графа?
+\item Возможно потербуется как-то учитывать те параметры, которые не вошли в итоговый граф.
+\end{enumerate}
 \end{document}  
