@@ -1,10 +1,13 @@
 \documentclass{dissert}
+\usepackage{cmap}
 \usepackage[T2A]{fontenc}
 \usepackage[utf8]{inputenc}
+
 %\usepackage[cp1251]{inputenc}
 \renewcommand{\rmdefault}{cmr}
 \usepackage{dsfont} % for indicator function
 \usepackage[russian]{babel}
+
 \usepackage{color}
 \usepackage{caption}
 \usepackage{float}
@@ -280,8 +283,13 @@
 \input{dis_intro}
 \chapter{Постановка задачи}
 \input{dis_statement}
-\chapter{Методы порождения и выбора модели}
-\chapter{Оценка параметров модели}
+\chapter{Обзор}
+\input{review}
+\chapter{Выбор модели с использованием вариационного вывода}
+\input{var_inf}
+\chapter{Оптимизация гиперпараметров в задаче выбора модели}
+\input{hyperparams}
+
 \chapter{Анализ прикладных задач порождения и выбора моделей глубокого обучения}
 \addcontentsline{toc}{section}{Заключение}
 \chapter*{Заключение}
