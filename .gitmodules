@@ -1,3 +1,6 @@
 [submodule "slides"]
 	path = slides
 	url = https://github.com/bahleg/tex_slides
+[submodule "main"]
+	path = main
+	url = https://github.com/bahleg/tex_phd
