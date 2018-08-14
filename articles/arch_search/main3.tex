@@ -1,0 +1,128 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{cmap}
+\usepackage[T2A]{fontenc}
+
+
+
+\usepackage{amssymb,amsfonts,amsthm,amsmath,mathtext,cite,enumerate,float}
+\usepackage[russian, english]{babel}
+\usepackage{graphicx}
+\usepackage{tabularx}
+
+\usepackage{enumerate}
+\usepackage{fancyhdr}
+\usepackage{a4wide}
+\usepackage{cite}
+
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multicol}
+\usepackage{multirow}
+
+%\renewcommand{\headrulewidth}{0pt}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\begin{document}
+\section{Постановка задачи}
+Задана выборка  \begin{equation}\label{eq:dataset}\mathfrak{D} = \{(\mathbf{x}_i,y_i)\}, i = 1,\dots,m,\end{equation} состоящая из множества пар <<объект-метка>> $$\mathbf{x}_i \in \mathbf{X} \subset \mathbb{R}^n, \quad {y}_i \in \mathbf{y} \subset \mathbb{Y}.$$ Метка ${y}$  объекта $\mathbf{x}$ принадлежит либо множеству: ${y} \in \mathbb{Y} = \{1, \dots, Z\}$ в случае задачи классификации, где $Z$ --- число классов, либо некоторому подмножеству вещественных чисел ${y} \in \mathbb{Y}  \subseteq \mathbb{R}$ в случае задачи регрессии. Определим множество архитектур моделей глубокого обучения для дальнейшего выбора оптимальной. 
+
+Пусть задан граф $V,E$. Пусть для каждого ребра $<i,j> \in E$ определено множество функций $\mathbf{o}(i,j)$. Граф $V, E$ с множеством функций $\mathbf{O}$ называется моделью, если функция, задаваемая рекурсивно как 
+\[
+    f_i(\mathbf{x}) = \sum_{j \in \text{Adj}(v_i)} o(i,j) (f_{j}(\mathbf{x})), 
+\]
+является непрерывной дифференцируемой функцией из $\mathbb{R}^n$ во множество $\mathbb{Y}$ при любом $o(i,j)$, являющемся линейной комбинацией функций из множества $\mathbf{o}(i,j)$.
+
+Пусть $\mathbf{w}$ --- множество всех параметров функций из $\mathbf{o}(i,j), <i,j> \in E$.
+Положим распределение параметров $\mathbf{w}$ нормальным с нулевым средним и диагональной квариационной матрицей:
+\[
+    \mathbf{w} \sim \mathcal{N}(\mathbf{0}, \mathbf{A}^{-1}).
+\]
+
+Пусть для каждого ребра $i,j$ задан нормированный положительный вектор $\boldsymbol{\gamma}_{i,j} \in \mathbb{R+}^{|\mathbf{o}(i,j)|}$, определяющий веса функций из множества $\mathbf{o}(i,j)$.
+Будем считать, что бинарный вектор $\boldsymbol{\gamma}_{i,j}$ распределен по распределению Дирихле:
+\[
+    \boldsymbol{\gamma}_{i,j}  \sim \text{Dir}({c}, \mathbf{m}_{i,j}).
+\] 
+где $\mathbf{c}_{i,j}$ --- вектор концентрации распределения, $\_{i,j}$ --- вектор средних. Обозначим за структуру модели $\boldsymbol{\Gamma}$ множество всех векторов $\boldsymbol{\gamma}$.
+
+Пусть также определено правдоподобие выборки $p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\gamma}).$
+\textbf{Определение} Правдоподобием модели $\mathbf{f}$ назовем следующее выражение: 
+\begin{equation}
+\label{eq:evidence}
+	p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c) = \int_{\mathbf{w}, \boldsymbol{\Gamma} } p(\mathbf{y}|\mathbf{X},\mathbf{W},  \boldsymbol{\Gamma})p(\mathbf{w}|\mathbf{A})p(\boldsymbol{\gamma}|\mathbf{m}, c)d\mathbf{W}d\mathbf{\Gamma}.
+\end{equation}
+
+Пусть задано значение концентрации $c$. 
+Требуется найти гиперпараметры модели $\mathbf{A}, \mathbf{m}$ доставляющие максимум правдоподобия модели:
+\[
+    \argmax_{\mathbf{A}, \mathbf{m}} \in \text{log}p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c).
+\]
+
+\textbf{Хочется: } чтобы $c$ находилось автоматически, см. spike-and-slab.
+
+\textbf{Утверждение (предварительно).} При $c << 0$ оптимизация  $\eqref{eq:evidence}$ эквивалентна оптимизации при ограничениях $\boldsymbol{\gamma}_{i,j} \in 2^{|\mathbf{o}(i,j)|}$.
+
+
+\section{Вариационная постановка задачи}
+Пусть заданы распределения $q_w, q_\gamma$, аппроксимирующие апостериорные распределения $p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c), p(\boldsymbol{\Gamma}| |\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c).$
+
+Положим $\boldsymbol{\theta}$ равным параметрам распределений $q_w, q_\gamma$. 
+Положим $\mathbf{h} = [\mathbf{A}, \mathbf{m}].$
+
+Пусть $L$ --- вариационная оценка правдоподобия:
+\[
+    L = \text{log} p(\mathbf{y}|\hat{\mathbf{W}}, \hat{\boldsymbol{\Gamma}}) - {D_{KL}}(q_\gamma||p(\boldsymbol{\Gamma})) - {D_{KL}}(q_{W}||p(\mathbf{W})).
+\]
+
+Пусть $Q$ --- валидационная функция:
+\[
+    Q(c, c_1, c_2, c_3, \mathbf{p}) = c_1\text{log} p(\mathbf{y}|\hat{\mathbf{W}}, \hat{\boldsymbol{\Gamma}}) + c_2[-{D_{KL}}(q_\gamma||p(\boldsymbol{\Gamma})) - {D_{KL}}(q_{W}||p(\mathbf{W}))] + 
+\]
+\[
+    + c_3\sum_{p_k \in \mathbf{p}}{D_{KL}}(q_\gamma||p_k),
+\]
+где $\mathbf{p}$ --- заданные распределения на структурах,$c_1,c_2,c_3$ --- коэффициенты.
+
+Сформулируем задачу поиска оптимальной модели как двухуровневую задачу.
+\begin{equation}
+\label{eq:optim}
+	\hat{\mathbf{h}} = \argmax_{\mathbf{h} \in \mathbb{R}^h} Q( T^\eta(\boldsymbol{\theta}_0, \mathbf{h})),
+\end{equation}
+где $T$ --- оператор оптимизации, решающий задачу оптимизации:
+\[
+    L(T^\eta(\boldsymbol{\theta}_0, \mathbf{h})) \to \min.
+\]
+\textbf{Вопрос: в последнем слагаемом априорные или вариационные распределения}.
+
+\textbf{Утверждение}. Пусть $D_{KL}(q_w|p(\mathbf{w}) = 0, D_{KL}(q_\gamma|p(\boldsymbol{\Gamma}) = 0$, пусть $c_1 = 1, c_2 = 1, c_3 = 0$. Тогда оптимизация $\eqref{eq:optim}$ эквивалентна оптимизации $\eqref{eq:evidence}$.
+
+\textbf{Определение (предварительно)}Параметрической $\delta$-сложностью модели назовем матожидание следующей величины:
+\[
+    C_\text{p}(\delta, \mathbf{w}) = \mathsf{E}\sum_{w \in \mathbf{w}} I(|w| > \delta).
+\] 
+
+\textbf{Определение (предварительно)} Структурной $\delta$-сложностью модели назовем матожидание следующей величины:
+\[
+     C_\text{s}(\delta, \boldsymbol{\Gamma}) = \mathsf{E}\sum_{\boldsymbol{\gamma} \in \boldsymbol{\Gamma}}\sum_{\gamma_i \in \boldsymbol{\gamma}} I(\gamma_i > \delta). 
+\]
+
+\textbf{Утверждение (предварительно).} Пусть $c_1 = 1, c_3 = 0, c_2 > 0, c_2' < c_2$. Пусть $\mathbf{w}, \mathbf{w}'$ --- параметры, полученные в результате соответствющих оптимизаций. Тогда  $C_\text{p}(\delta, \mathbf{w}') \leq C_\text{p}(\delta, \mathbf{w}).$ 
+
+\textbf{Идея доказательства:}  для примера: пусть вар. распределение --- нормальное. При снижении $c_2$ до нуля получаем $\mathbf{A}_q \to \infty$.
+
+\textbf{Утверждение (предварительно).} Пусть $c' < c$. Пусть $ \boldsymbol{\Gamma},  \boldsymbol{\Gamma}'$ --- параметры, полученные в результате соответствющих оптимизаций. Тогда  $C_\text{s}(\delta, \mathbf{w}') \leq C_\text{s}(\delta, \mathbf{w}).$ 
+
+\textbf{Утверждение (предварительно, нужно развить).} Пусть $c_3 > 0, c << 0$ и все $p_k \in \mathbf{p}$ отражают распределения на вершинах симплекса. Тогда оптимизация приведет к $q_\gamma$, сконцентрированному на одной из остальных вершин симплекса.
+
+\textbf{Утверждение (очень предварительно).} Изменение $c$ позволяет избежать ухода в локальный минимум. 
+
+\textbf{Утверждение (очень предварительно).} Изменение $c_2$ позволяет избежать ухода в локальный минимум.
+
+\textbf{Утверждение (предварительно).} Пусть $c_1 = c_2 = c_3 = 0$. Пусть $q_w \sim \mathcal{N}(\mathbf{0}, \sigma), \sigma \sim 0$. 
+Тогда оптимизация эквивалентна обычной оптимизации параметров с $l_2$ - регуляризацией.
+
+Далее будем рассматривать $q_w \sim \mathcal{N}(\mathbf{0}, \mathbf{A}_q^{-1}), \quad q_\gamma \sim \text{Gumbel-Softmax}(\mathbf{g}, \tau).$
+\textbf{Проблема:} $\text{Gumbel-Softmax}$ близко к распределению Дирихле. В случае оптимизации Evidence ($c_1 = c_2 = 1, c_3 = 0$) оптимизация выродится к $q_\gamma = p_\gamma$.
+
+\end{document}  
