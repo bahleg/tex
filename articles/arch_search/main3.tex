@@ -40,44 +40,44 @@
 \]
 
 Пусть для каждого ребра $i,j$ задан нормированный положительный вектор $\boldsymbol{\gamma}_{i,j} \in \mathbb{R+}^{|\mathbf{o}(i,j)|}$, определяющий веса функций из множества $\mathbf{o}(i,j)$.
-Будем считать, что бинарный вектор $\boldsymbol{\gamma}_{i,j}$ распределен по распределению Дирихле:
+Будем считать, что вектор $\boldsymbol{\gamma}_{i,j}$ распределен по распределению Дирихле:
 \[
     \boldsymbol{\gamma}_{i,j}  \sim \text{Dir}({c}, \mathbf{m}_{i,j}).
 \] 
-где $\mathbf{c}_{i,j}$ --- вектор концентрации распределения, $\_{i,j}$ --- вектор средних. Обозначим за структуру модели $\boldsymbol{\Gamma}$ множество всех векторов $\boldsymbol{\gamma}$.
+где $c$ --- вектор концентрации распределения, $\mathbf{m}_{i,j}$ --- вектор средних. Обозначим за структуру модели $\boldsymbol{\Gamma}$ множество всех векторов $\boldsymbol{\gamma}$.
 
-Пусть также определено правдоподобие выборки $p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\gamma}).$
+Пусть также определено правдоподобие выборки $p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}).$
+
 \textbf{Определение} Правдоподобием модели $\mathbf{f}$ назовем следующее выражение: 
 \begin{equation}
 \label{eq:evidence}
-	p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c) = \int_{\mathbf{w}, \boldsymbol{\Gamma} } p(\mathbf{y}|\mathbf{X},\mathbf{W},  \boldsymbol{\Gamma})p(\mathbf{w}|\mathbf{A})p(\boldsymbol{\gamma}|\mathbf{m}, c)d\mathbf{W}d\mathbf{\Gamma}.
+	p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c) = \int_{\mathbf{w}, \boldsymbol{\Gamma} } p(\mathbf{y}|\mathbf{X},\mathbf{w},  \boldsymbol{\Gamma})p(\mathbf{w}|\mathbf{A})p(\boldsymbol{\Gamma}|\mathbf{m}, c)d\mathbf{w}d\mathbf{\Gamma}.
 \end{equation}
 
 Пусть задано значение концентрации $c$. 
 Требуется найти гиперпараметры модели $\mathbf{A}, \mathbf{m}$ доставляющие максимум правдоподобия модели:
 \[
-    \argmax_{\mathbf{A}, \mathbf{m}} \in \text{log}p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c).
+    \argmax_{\mathbf{A}, \mathbf{m}}  \text{log}p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c).
 \]
 
-\textbf{Хочется: } чтобы $c$ находилось автоматически, см. spike-and-slab.
-
-\textbf{Утверждение (предварительно).} При $c << 0$ оптимизация  $\eqref{eq:evidence}$ эквивалентна оптимизации при ограничениях $\boldsymbol{\gamma}_{i,j} \in 2^{|\mathbf{o}(i,j)|}$.
+\textbf{Утверждение (предварительно).} При $c << 0$ оптимизация  $\eqref{eq:evidence}$ эквивалентна оптимизации дискретной оптимизации: $\boldsymbol{\gamma}_{i,j} \in 2^{|\mathbf{o}(i,j)|}$.
 
 
 \section{Вариационная постановка задачи}
-Пусть заданы распределения $q_w, q_\gamma$, аппроксимирующие апостериорные распределения $p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c), p(\boldsymbol{\Gamma}| |\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c).$
+Пусть заданы распределения $q_w, q_\gamma$, аппроксимирующие апостериорные распределения $p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c), p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c).$
 
 Положим $\boldsymbol{\theta}$ равным параметрам распределений $q_w, q_\gamma$. 
 Положим $\mathbf{h} = [\mathbf{A}, \mathbf{m}].$
 
 Пусть $L$ --- вариационная оценка правдоподобия:
 \[
-    L = \text{log} p(\mathbf{y}|\hat{\mathbf{W}}, \hat{\boldsymbol{\Gamma}}) - {D_{KL}}(q_\gamma||p(\boldsymbol{\Gamma})) - {D_{KL}}(q_{W}||p(\mathbf{W})).
+    L = \text{log} p(\mathbf{y}|\hat{\mathbf{w}}, \hat{\boldsymbol{\Gamma}}) - {D_{KL}}(q_\gamma||p(\boldsymbol{\Gamma})) - {D_{KL}}(q_{w}||p(\mathbf{w})),
 \]
+где $\hat{\mathbf{w}} \sim q_w, \quad \hat{\boldsymbol{\Gamma}} \sim q_\gamma$.
 
 Пусть $Q$ --- валидационная функция:
 \[
-    Q(c, c_1, c_2, c_3, \mathbf{p}) = c_1\text{log} p(\mathbf{y}|\hat{\mathbf{W}}, \hat{\boldsymbol{\Gamma}}) + c_2[-{D_{KL}}(q_\gamma||p(\boldsymbol{\Gamma})) - {D_{KL}}(q_{W}||p(\mathbf{W}))] + 
+    Q(c, c_1, c_2, c_3, \mathbf{p}) = c_1\text{log} p(\mathbf{y}||\hat{\mathbf{w}}, \hat{\boldsymbol{\Gamma}}) + c_2[-{D_{KL}}(q_\gamma||p(\boldsymbol{\Gamma})) - {D_{KL}}(q_{w}||p(\mathbf{w}))] + 
 \]
 \[
     + c_3\sum_{p_k \in \mathbf{p}}{D_{KL}}(q_\gamma||p_k),
@@ -91,11 +91,12 @@
 \end{equation}
 где $T$ --- оператор оптимизации, решающий задачу оптимизации:
 \[
-    L(T^\eta(\boldsymbol{\theta}_0, \mathbf{h})) \to \min.
+    L(T^\eta(\boldsymbol{\theta}_0, \mathbf{h})) \to \max.
 \]
 \textbf{Вопрос: в последнем слагаемом априорные или вариационные распределения}.
 
-\textbf{Утверждение}. Пусть $D_{KL}(q_w|p(\mathbf{w}) = 0, D_{KL}(q_\gamma|p(\boldsymbol{\Gamma}) = 0$, пусть $c_1 = 1, c_2 = 1, c_3 = 0$. Тогда оптимизация $\eqref{eq:optim}$ эквивалентна оптимизации $\eqref{eq:evidence}$.
+
+\textbf{Утверждение}. Пусть $D_{KL}(q_w|p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c)) = 0, D_{KL}(q_\gamma|p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c)) = 0$, пусть $c_1 = 1, c_2 = 1, c_3 = 0$. Тогда оптимизация $\eqref{eq:optim}$ эквивалентна оптимизации $\eqref{eq:evidence}$.
 
 \textbf{Определение (предварительно)}Параметрической $\delta$-сложностью модели назовем матожидание следующей величины:
 \[
@@ -106,6 +107,7 @@
 \[
      C_\text{s}(\delta, \boldsymbol{\Gamma}) = \mathsf{E}\sum_{\boldsymbol{\gamma} \in \boldsymbol{\Gamma}}\sum_{\gamma_i \in \boldsymbol{\gamma}} I(\gamma_i > \delta). 
 \]
+
 
 \textbf{Утверждение (предварительно).} Пусть $c_1 = 1, c_3 = 0, c_2 > 0, c_2' < c_2$. Пусть $\mathbf{w}, \mathbf{w}'$ --- параметры, полученные в результате соответствющих оптимизаций. Тогда  $C_\text{p}(\delta, \mathbf{w}') \leq C_\text{p}(\delta, \mathbf{w}).$ 
 
@@ -123,6 +125,5 @@
 Тогда оптимизация эквивалентна обычной оптимизации параметров с $l_2$ - регуляризацией.
 
 Далее будем рассматривать $q_w \sim \mathcal{N}(\mathbf{0}, \mathbf{A}_q^{-1}), \quad q_\gamma \sim \text{Gumbel-Softmax}(\mathbf{g}, \tau).$
-\textbf{Проблема:} $\text{Gumbel-Softmax}$ близко к распределению Дирихле. В случае оптимизации Evidence ($c_1 = c_2 = 1, c_3 = 0$) оптимизация выродится к $q_\gamma = p_\gamma$.
 
 \end{document}  
