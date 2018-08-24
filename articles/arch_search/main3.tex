@@ -57,19 +57,34 @@
 Пусть задано значение концентрации $c$. 
 Требуется найти гиперпараметры модели $\mathbf{A}, \mathbf{m}$ доставляющие максимум правдоподобия модели:
 \[
-    \argmax_{\mathbf{A}, \mathbf{m}}  \text{log}p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c).
+    \argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c).
 \]
 
 \textbf{Утверждение (предварительно).} При $c << 0$ оптимизация  $\eqref{eq:evidence}$ эквивалентна оптимизации дискретной оптимизации: $\boldsymbol{\gamma}_{i,j} \in 2^{|\mathbf{o}(i,j)|}$.
 
 
 \section{Вариационная постановка задачи}
-Пусть заданы распределения $q_w, q_\gamma$, аппроксимирующие апостериорные распределения $p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c), p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c).$
+В общем виде вычисление значения интеграла~\eqref{eq:evidence} является вычислительно сложной процедурой. В качестве приближенного значения интеграла будем использовать вариационную верхнюю оценку правдоподобия модели. Пусть заданы непрерывные параметрические распределения $q_w, q_\gamma$, аппроксимирующие апостериорные распределения $p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c)$, $p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c).$ Тогда верно следующее выражение:
+\begin{equation}
+\label{eq:elbo}
+    \text{log} p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c)  \leq \mathsf{E}_{q_w,q_\gamma}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - {D_{KL}}(q_\gamma||p(\boldsymbol{\Gamma})) - {D_{KL}}(q_{w}||p(\mathbf{w})).
+\end{equation}
+Разница между верхней оценкой~\eqref{eq:elbo} и правдоподобием модели~\eqref{eq:evidence} определяется дивергенцией между апостериорными распределениями $p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c)$, $p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c).$ и вариационными распределениями  $q_w, q_\gamma$.
+
+%Мотивацию сюда и определения сложности
+Сформулируем основные требования к оптимизационной задаче и оптимизируемым функционалам:
+\begin{enumerate}
+\item Оптимизируемые функции должны быть дифференцируемы.
+\item Оптимизация должна приводить к максимуму вариационной оценки.
+\item Оптимизация должна позволять калибровать количество эффектинвых параметров
+\item Оптимизация должна позволять калибровать количество эффекитвных ребер.
+\item Оптимизация должна позволять проводить полный перебор структуры.
+\end{enumerate}
 
 Положим $\boldsymbol{\theta}$ равным параметрам распределений $q_w, q_\gamma$. 
 Положим $\mathbf{h} = [\mathbf{A}, \mathbf{m}].$
 
-Пусть $L$ --- вариационная оценка правдоподобия:
+Пусть $L$ --- приближенное значение вариационной оценки правдоподобия:
 \[
     L = \text{log} p(\mathbf{y}|\hat{\mathbf{w}}, \hat{\boldsymbol{\Gamma}}) - {D_{KL}}(q_\gamma||p(\boldsymbol{\Gamma})) - {D_{KL}}(q_{w}||p(\mathbf{w})),
 \]
