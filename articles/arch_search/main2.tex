@@ -49,6 +49,141 @@
 \item Метод должен быть эффективен по ресурсами.
 
 \end{enumerate}
+
+
+\clearpage
+\section{Постановка задачи}
+Задана выборка  \begin{equation}\label{eq:dataset}\mathfrak{D} = \{(\mathbf{x}_i,y_i)\}, i = 1,\dots,m,\end{equation} состоящая из множества пар <<объект-метка>> $$\mathbf{x}_i \in \mathbf{X} \subset \mathbb{R}^n, \quad {y}_i \in \mathbf{y} \subset \mathbb{Y}.$$ Метка ${y}$  объекта $\mathbf{x}$ принадлежит либо множеству: ${y} \in \mathbb{Y} = \{1, \dots, Z\}$ в случае задачи классификации, где $Z$ --- число классов, либо некоторому подмножеству вещественных чисел ${y} \in \mathbb{Y}  \subseteq \mathbb{R}$ в случае задачи регрессии. Определим множество архитектур моделей глубокого обучения для дальнейшего выбора оптимальной. 
+
+\textbf{Определение} Функция $\mathbf{o}$ называется $n_1,n_2$ - допустимой, если для вектора $\mathbf{x} \in \mathbb{R}^{n_1}$ функция $\mathbf{o}$ определена и $\mathbf{o}(\mathbf{x}) \in \mathbb{R}^{n_2}$.
+
+
+\textbf{Определение} Пусть задан вектор натуральных чисел  $V = [v_0, v1,\dots,v_d]$ и множество (возможно пустых) ребер $E$.
+Пусть также задано множество нелинейных функций ${O}$, такое что нулевая функция лежит в этом множестве.
+Соответствие $\mathbf{f}: E \to O$ будем называть моделью, если оно удовлетворяет условиям:
+\begin{enumerate}
+\item $\text{deg}^{+}({v}_0) = 0$
+\item $\text{deg}^{-}({v}_d) = 0$.
+\item Для каждого ребра $e$ между вершинами $v_i,v_j$ определена $v_i, v_j$-допустимая операция $\mathbf{o} \in O$.  
+\end{enumerate}
+
+\textbf{Определение} Параметрами модели (носителем?) $\mathbf{f}$, соответствующей графу $<V,E>$ с множеством операций $O$ будем называть вектор матриц $\mathbf{W} = [\mathbf{w}_1, \dots, \mathbf{w}_d]$ и бинарным множеством векторов, соответствующих ребрам графа $<V,E>$  $\boldsymbol{\Gamma} = \{\boldsymbol{\gamma}_{i,j}: (v_i,v_j) \in E \}, \boldsymbol{\gamma}_{i,j} \in \mathbb{R}^{|O|}$, т.ч. $\forall \gamma \in \boldsymbol{\Gamma}: ||\gamma||_1 = 1$.
+
+Результатом функции $\mathbf{f}(\mathbf{x})$ будем полагать рекуррентное выполнение операций над $\mathbf{x}$ с выполнением обхода от вершины $v_0$:
+\[
+    f_0(\mathbf{x}) = \mathbf{x},
+\]
+\[
+    f_i(\mathbf{x}) = \sum_{j: (j,i) \in E} \sum_{k = 1}^{|O|} {\gamma}^k_{i,j} \mathbf{o}_{k}  (\mathbf{w}_i f_j(\mathbf{x})). 
+\]
+
+Далее будем рассматривать следующую параметризацию распределения Дирихле:
+\[
+    p(x_1,\dots,x_K) = \frac{1}{B(\frac{\mathbf{m}}{c})}  \prod_{i=1}^K x^{\frac{m_i}{c} - 1}_i,
+\]
+$c$ --- параметр точности (precision), $\mathbf{m}$ --- средний вектор.
+
+Пусть для модели определено правдоподобие: $p(\mathbf{y}|\mathbf{W},\boldsymbol{\Gamma}, \mathbf{X})$. Пусть также задано априорное распределение параметров модели $\mathbf{W}$:
+\[
+    \mathbf{W} \sim \mathcal{N}(0, \mathbf{A}^{-1}), \quad \boldsymbol{\Gamma} \sim \text{Dir}(\mathbf{m}, c),
+\]
+где $\mathbf{A}^{-1}$ --- диагональная матрица гиперпараметров, $\alpha$ --- гиперпараметр концентрации весов параметров.
+
+\textbf{Определение} Сложностью модели $\mathbf{f}$ назовем правдоподобие модели: 
+\begin{equation}
+\label{eq:evidence}
+	p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c) = \int_{\mathbf{W}, \boldsymbol{\Gamma} } p(\mathbf{y}|\mathbf{X},\mathbf{W},  \boldsymbol{\Gamma})p(\mathbf{w}|\mathbf{A})p(\boldsymbol{\Gamma}|\mathbf{m}, c)d\mathbf{W}d\mathbf{\Gamma}.
+\end{equation}
+
+
+\textbf{Определение} Пусть заданы множество вершин $V$, множество операций $O$. Пусть задано значение $c$. Обозначим за $\mathfrak{F}(V,E,O)$ множество всех моделей для заданных $V,O$.
+Модель $\mathbf{f}$ назовем оптимальной, если достигается максимум интеграла:
+\[
+    \mathbf{f} = \argmax_{\mathbf{f}' \in \mathfrak{F}(V,E,O)}\max_{\mathbf{A}, \mathbf{m}} p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c).
+\]
+
+\newpage
+
+\section{Вариационный вывод}
+Введем два аппроксимирующих параметрических распределения: 
+$$
+q_\mathbf{w} \sim \mathcal{N}(\boldsymbol{\mu}, \mathbf{A}_q^{-1}) \approx p(\mathbf{W}|\mathbf{X}, \mathbf{y}, \mathbf{A}, \boldsymbol{\Gamma}),
+$$
+$$
+q_\gamma \sim \text{Gumbel-Softmax}(\mathbf{g}, \tau) \approx p(\boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{A}, \alpha).
+$$
+
+Пусть $L$ --- вариационная оценка правдоподобия:
+\[
+    L = \text{log} p(\mathbf{y}|\hat{\mathbf{W}}, \hat{\boldsymbol{\Gamma}}) - \text{KLD}(q_\gamma||p(\boldsymbol{\Gamma})) - \text{KLD}(q_\mathbf{W}||p(\mathbf{W})).
+\]
+
+
+Пусть $\boldsymbol{\theta}$ --- параметры вариационных распределений:
+\[
+    \boldsymbol{\theta} = [\boldsymbol{\mu}, \mathbf{A}_q^{-1}, \mathbf{g}, \tau].
+\] 
+
+Пусть $\mathbf{h}$ --- параметры априорных распределений:
+\[
+    \mathbf{h} = [\mathbf{A}, \mathbf{m}].
+\]
+
+
+
+
+Сформулируем задачу поиска оптимальной модели как двухуровневую задачу.
+\begin{equation}
+\label{eq:optim}
+	\hat{\mathbf{h}} = \argmax_{\mathbf{h} \in \mathbb{R}^h} Q( T^\eta(\boldsymbol{\theta}_0, \mathbf{h})),
+\end{equation}
+где $T$ --- оператор оптимизации, решающий задачу оптимизации:
+\[
+    L(T^\eta(\boldsymbol{\theta}_0, \mathbf{h})) \to \min.
+\]
+
+\subsection{Функция валидации Q}
+Пусть $\eta$ --- общее число итераций оптимизации. Разобьем оптимизацию модели на $\pi$ эпох, каждая по $\eta'$ итераций.
+Функция валидации имеет вид:
+\[
+Q = c_1 \mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}) + c_2 D_\text{KL}(q_\mathbf{W}^\eta|p(\mathbf{W}| \mathbf{A}^\eta)) + c_3 D_\text{KL}(q_{\boldsymbol{\Gamma}}^\eta|p(\boldsymbol{\Gamma}, \mathbf{m}^\eta)) + c_4 \sum_{t = 1}^{[\frac{T}{\eta'}]} D_\text{KL}(p({\boldsymbol{\Gamma}}|\mathbf{m}^\eta)|p({\boldsymbol{\Gamma}}|\mathbf{m}^{t\eta'})).
+\] 
+Идея последнего слагаемого: https://arxiv.org/pdf/1704.03003.pdf
+
+Рассмотрим подробнее режимы оптимизации, получаемые из данной функции.
+\paragraph{Тривиальные режимы}
+Пусть $c \to_t 0.$
+При отказе от оптимизации гиперпараметров и при фиксированных $\mathbf{A}^q \to 0$ задача сводится оптимизации правдоподобия выборки. 
+
+При отказе от оптимизации гиперпараметров и сэмплировании среднего из $q_\mathbf{W}$ задача сводится к гребневой регрессии.
+
+\paragraph{Оптимизация правдоподобия модели}
+Пусть $c \to_t 0.$
+Пусть $c_1 = 1$, $c_2 = c_3 = -1$. Тогда оптимизация эквивалентна оптимизации Evidence. 
+TODO: рассмотреть, когда оптимизация эквивалентна одновременной оптимизации $L,Q$.
+
+\paragraph{Полный перебор}
+Пусть $c >> 0$ для каждой итерации начала эпохи и $c \to_t 0$ для каждой итерации конца эпохи.
+Пусть $c_4 > 0, c_1,c_3 = 0.$ Тогда задача сводится к оптимизации правдоподобия модели (по параметрам модели) и преребору (по структуре).
+TODO: доказать.
+
+\paragraph{Add-Del по параметрам}
+Пусть $c>> 0$ для каждой итерации начала эпохи и $c \to_t 0$ для каждой итерации конца эпохи.
+Пусть для каждой четной эпохи $c_2 = 1$, для нечетной: $c_2 < 1$.
+
+TODO: формализация Add-Del.
+
+
+\paragraph{Add-Del по структуре}
+Пусть $c  >> 0$ для каждой итерации начала эпохи и $c \to_t 0$ для каждой итерации конца эпохи.
+Пусть для каждой четной эпохи $c_3 = 1$, для нечетной: $c_3 < 1$.
+
+TODO: формализация Add-Del.
+
+ 
+\paragraph{Эволюционный алгоритм}
+TODO: формализация
+
 \newpage
 \section{Обозначения}
 
@@ -67,7 +202,7 @@
   Нелинейная функция & $\mathbf{o}$ & - & Нелинейно отображает объекты внутри сети & - \\ \hline
   Множество нелинейных функций & $O$ & - & Набор возможных нелинейных функций для каждого элемента сети & $\mathbf{o}, \mathbf{f}$ \\ \hline
   Вершина графа & $v$ & $\mathbb{N}$ & Определяет операция над выборкой. Число определяет размерность объекта после прохождения операции & $V$ \\ \hline
-  Множество вершин & $V$ & - & Множество возможных операций над выборкой. Каждая операция определяется своей матрицей, размерность которой соотвествует числу $v \in V$ & $v, d, \mathbf{f}$ \\ \hline
+  Множество вершин & $V$ & - & Множество возможных операций над выборкой. Каждая операция определяется своей матрицей, размерность которой соответствует числу $v \in V$ & $v, d, \mathbf{f}$ \\ \hline
   Число вершин & $d$ - & - & $V$ \\ \hline
   Ребро графа & $e$ & $2^{d \times {d-1}}$ & Определяет наличие нелинейной функции, идущей от одной вершины к другой & $V$ \\ \hline
   %Валентность графа & $K$ & $\mathbb{N}$ & Максимальная степень вершины: сколько нелинейых операций может идти к одной вершине & $\mathbf{f}$ \\ \hline
@@ -86,7 +221,7 @@
 \bf Что & \bf Обозна- чение & \bf Простр. & \bf Что делает & \bf С чем связано  \\ \hline \hline
 Параметры для одной вершины & $\mathbf{w}$ & $\mathbb{R}^{v}$ & & $v, \mathbf{W}$ \\ \hline 
 Вектор параметров модели & $\mathbf{W}$ & - & Все параметры модели & $\mathbf{w}, \mathbf{f}$ \\ \hline
-Структура для вершины, бинарный вектор с одной единицей & $\gamma$ & $2^{|O|}$ & Определяет веса нелинейных операций, входящих в веришну & $\boldsymbol{\Gamma}, v$ \\ \hline
+Структура для вершины, бинарный вектор с одной единицей & $\gamma$ & $2^{|O|}$ & Определяет веса нелинейных операций, входящих в вершину & $\boldsymbol{\Gamma}, v$ \\ \hline
 Структура для модели & $\boldsymbol{\Gamma}$ & - & Определяет все веса нелинейных операций в модели & $\gamma$ \\ \hline
 Ковариация параметров & $\mathbf{A}^{-1}$ & $\mathbb{R}^n$ & Определяет prior для параметров & $\mathbf{W}$ \\ \hline
 Концентрация & $\alpha$  & $\mathbb{R}$ & Определяет prior для структуры & $\boldsymbol{\Gamma}$ \\ \hline
@@ -115,132 +250,4 @@
 \includegraphics[width=\textwidth]{model_search.png}
 \end{figure}
  
-
-\clearpage
-\section{Постановка задачи}
-Задана выборка  \begin{equation}\label{eq:dataset}\mathfrak{D} = \{(\mathbf{x}_i,y_i)\}, i = 1,\dots,m,\end{equation} состоящая из множества пар <<объект-метка>> $$\mathbf{x}_i \in \mathbf{X} \subset \mathbb{R}^n, \quad {y}_i \in \mathbf{y} \subset \mathbb{Y}.$$ Метка ${y}$  объекта $\mathbf{x}$ принадлежит либо множеству: ${y} \in \mathbb{Y} = \{1, \dots, Z\}$ в случае задачи классификации, где $Z$ --- число классов, либо некоторому подмножеству вещественных чисел ${y} \in \mathbb{Y}  \subseteq \mathbb{R}$ в случае задачи регрессии. Определим множество архитектур моделей глубокого обучения для дальнейшего выбора оптимальной. 
-
-\textbf{Определение} Функция $\mathbf{o}$ называется $n_1,n_2$ - допустимой, если для вектора $\mathbf{x} \in \mathbb{R}^{n_1}$ функция $\mathbf{o}$ определена и $\mathbf{o}(\mathbf{x}) \in \mathbb{R}^{n_2}$.
-
-
-\textbf{Определение} Пусть задан вектор натуральных чисел  $V = [v_0, v1,\dots,v_d]$ и множество (возможно пустых) ребер $E$.
-Пусть также задано множество нелинейных функций ${O}$, такое что нулевая функция лежит в этом множестве.
-Соответствие $\mathbf{f}: E \to O$ будем называть моделью, если оно удовлетворяет условиям:
-\begin{enumerate}
-\item $\text{deg}^{+}({v}_0) = 0$
-\item $\text{deg}^{-}({v}_d) = 0$.
-\item Для каждого ребра $e$ между вершинами $v_i,v_j$ определена $v_i, v_j$-допустимая операция $\mathbf{o} \in O$.  
-\end{enumerate}
-
-\textbf{Определение} Параметрами модели (носителем?) $\mathbf{f}$, соответствующей графу $<V,E>$ с множеством операций $O$ будем называть вектор матриц $\mathbf{W} = [\mathbf{w}_1, \dots, \mathbf{w}_d]$ и бинарным множеством векторов, соответствующих ребрам графа $<V,E>$  $\boldsymbol{\Gamma} = \{\boldsymbol{\gamma}_{i,j}: (v_i,v_j) \in E \}, \boldsymbol{\gamma}_{i,j} \in \mathbb{R}^{|O|}$, т.ч. $\forall \gamma \in \boldsymbol{\Gamma}: ||\gamma||_1 \leq 1$.
-
-Результатом функции $\mathbf{f}(\mathbf{x})$ будем полагать рекуррентное выполнение операций над $\mathbf{x}$ с выполнением обхода от вершины $v_0$:
-\[
-    f_0(\mathbf{x}) = \mathbf{x},
-\]
-\[
-    f_i(\mathbf{x}) = \sum_{j: (j,i) \in E} \sum_{k = 1}^{|O|} {\gamma}^k_{i,j} \mathbf{o}_{k}  (\mathbf{w}_i f_j(\mathbf{x})). 
-\]
-
-Пусть для модели определено правдоподобие: $p(\mathbf{y}|\mathbf{W},\boldsymbol{\Gamma}, \mathbf{X})$. Пусть также задано априорное распределение параметров модели $\mathbf{W}$:
-\[
-    \mathbf{W} \sim \mathcal{N}(0, \mathbf{A}^{-1}), \quad \boldsymbol{\Gamma} \sim \text{Dir}(\alpha),
-\]
-где $\mathbf{A}^{-1}$ --- диагональная матрица гиперпараметров, $\alpha$ --- гиперпараметр концентрации весов параметров.
-
-\textbf{Определение} Сложностью модели $\mathbf{f}$ назовем правдоподобие модели: 
-\begin{equation}
-\label{eq:evidence}
-	p(\mathbf{y}|\mathbf{X},\mathbf{A},\alpha) = \int_{\mathbf{W}, \boldsymbol{\Gamma} } p(\mathbf{y}|\mathbf{X},\mathbf{W},  \boldsymbol{\Gamma})p(\mathbf{w}|\mathbf{A})p(\boldsymbol{\Gamma}|\alpha)d\mathbf{W}d\mathbf{\Gamma}.
-\end{equation}
-
-
-\textbf{Определение} Пусть заданы множество вершин $V$, множество операций $O$. Обозначим за $\mathfrak{F}(V,E,O)$ множество всех моделей для заданных $V,O$.
-Модель $\mathbf{f}$ назовем оптимальной, если достигается максимум интеграла:
-\[
-    \mathbf{f} = \argmax_{\mathbf{f}' \in \mathfrak{F}(V,E,O)}\max_{\mathbf{A}} p(\mathbf{y}|\mathbf{X},\mathbf{A},\alpha).
-\]
-
-\newpage
-
-\section{Вариационный вывод}
-Введем два аппроксимирующих параметрических распределения: 
-$$
-q_\mathbf{w} \sim \mathcal{N}(\boldsymbol{\mu}, \mathbf{A}_q^{-1}) \approx p(\mathbf{W}|\mathbf{X}, \mathbf{y}, \mathbf{A}, \boldsymbol{\Gamma}),
-$$
-$$
-q_\gamma \sim \text{Gumbel-Softmax}(\mathbf{g}) \approx p(\boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{A}, \alpha).
-$$
-
-Пусть $L$ --- вариационная оценка правдоподобия:
-\[
-    L = \text{log} p(\mathbf{y}|\hat{\mathbf{W}}, \hat{(\boldsymbol{\Gamma}}) - \text{KLD}(q_\gamma||p(\boldsymbol{\Gamma})) - \text{KLD}(q_\mathbf{W}||p(\mathbf{W})).
-\]
-
-
-Пусть $\boldsymbol{\theta}$ --- параметры распределений $q_\mathbf{w}$ и $q_\gamma$:
-\[
-    \boldsymbol{\theta} = [\boldsymbol{\mu}, \mathbf{A}_q^{-1}, \mathbf{g}].
-\] 
-
-Пусть $\mathbf{h}$ --- параметры априорных распределений, а также гиперпараметры распределений  $q\mathbf{w}$ и $q_\mathbf{g}$:
-\[
-    \mathbf{h} = [\mathbf{A}, \alpha, \tau],
-\]
-где $\tau$ --- температура Гумбель-софтмакс распределения.
-
-
-
-Сформулируем задачу поиска оптимальной модели как двухуровневую задачу.
-\begin{equation}
-\label{eq:optim}
-	\hat{\mathbf{h}} = \argmax_{\mathbf{h} \in \mathbb{R}^h} Q( T^\eta(\boldsymbol{\theta}_0, \mathbf{h})),
-\end{equation}
-где $T$ --- оператор оптимизации, решающий задачу оптимизации:
-\[
-    L(T^\eta(\boldsymbol{\theta}_0, \mathbf{h})) \to \min.
-\]
-
-\subsection{Функция валидации Q}
-Пусть $\eta$ --- общее число итераций оптимизации. Разобьем оптимизацию модели на $\pi$ эпох, каждая по $\eta'$ итераций.
-Функция валидации имеет вид:
-\[
-Q = c_1 \mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}) + c_2 D_\text{KL}(q_\mathbf{W}^\eta|p(\mathbf{W}, \mathbf{A}^\eta)) + c_3 D_\text{KL}(q_{\boldsymbol{\Gamma}}^\eta|p(\boldsymbol{\Gamma}, \alpha^\eta)) + c_4 \sum_{t = 1}^{[\frac{T}{\eta'}]} D_\text{KL}(q_{\boldsymbol{\Gamma}}|q^{t\eta'}_{\boldsymbol{\Gamma}})).
-\] 
-Идея последнего слагаемого: https://arxiv.org/pdf/1704.03003.pdf
-
-Рассмотрим подробнее режимы оптимизации, получаемые из данной функции.
-\paragraph{Тривиальные режимы}
-Пусть $\alpha, \tau \to_t 0.$
-При отказе от оптимизации гиперпараметров и при фиксированных $\mathbf{A}^q \to 0$ задача сводится оптимизации правдоподобия выборки. 
-
-При отказе от оптимизации гиперпараметров и сэмплировании среднего из $q_\mathbf{W}$ задача сводится к гребневой регрессии.
-
-\paragraph{Оптимизация правдоподобия модели}
-Пусть $\alpha, \tau \to_t 0.$
-Пусть $c_1 = 1$, $c_2 = c_3 = -1$. Тогда оптимизация эквивалентна оптимизации Evidence. 
-TODO: рассмотреть, когда оптимизация эквивалентна одновременной оптимизации $L,Q$.
-
-\paragraph{Полный перебор}
-Пусть $\alpha >> 0, \tau >> 0$ для каждой итерации начала эпохи и $\alpha, \tau \to_t 0$ для каждой итерации конца эпохи.
-Пусть $c_4 > 0, c_1,c_3 = 0.$ Тогда задача сводится к оптимизации правдоподобия модели (по параметрам модели) и преребору (по структуре).
-TODO: доказать.
-
-\paragraph{Add-Del по параметрам}
-Пусть $\alpha >> 0, \tau >> 0$ для каждой итерации начала эпохи и $\alpha, \tau \to_t 0$ для каждой итерации конца эпохи.
-Пусть для каждой четной эпохи $c_2 = 1$, для нечетной: $c_2 < 1$.
-
-TODO: формализация Add-Del.
-
-
-\paragraph{Add-Del по структуре}
-Пусть $\alpha >> 0, \tau >> 0$ для каждой итерации начала эпохи и $\alpha, \tau \to_t 0$ для каждой итерации конца эпохи.
-Пусть для каждой четной эпохи $c_3 = 1$, для нечетной: $c_3 < 1$.
-
-TODO: формализация Add-Del.
-
- 
-\paragraph{Эволюционный алгоритм}
-TODO: формализация
-
 \end{document}  
