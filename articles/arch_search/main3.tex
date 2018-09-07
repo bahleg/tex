@@ -25,7 +25,18 @@
 \DeclareMathOperator*{\argmax}{arg\,max}
 \begin{document}
 \section{Аннотация}
-В работе рассматривается задача выбора структуры модели глубокого обучения. Модель --- вычислительный граф со множеством операций на ребрах, такой что любой выбор операций порождает дифференцируемую функцию заданной сигнатуры. Структурой модели назовем набор выбранных операций с их весами. Для определения оптимальной структуры предлагается ввести вероятностную интерпретацию структуры модели и провести оптимизацию на основе вариационного вывода. В качестве внешнего критерия качества выбора структуры предлагается обобщенная функция качества, позволяющая проводить оптимизацию в нескольких режимах: add-del, полный перебор, максимизация правдоподобия модели.
+В работе рассматривается задача выбора структуры модели глубокого обучения.
+Модель --- это вычислительный граф, т.е. граф, в котором ребрами выступают нелинейные функции, а вершинами --- результаты дейтсвия функцией на выборку.  Каждому ребру поставлено в соответствтие множество нелинейных функций, такое что любая линейная комбинация этих функций определяет дифференцируемую функцию заданной сигнатуры. Структурой модели назовем веса линейной комбинации этих функций. 
+
+Для нахождения оптимальной структуры предлагается ввести вероятностную интерпретацию  модели.
+Проводится градиентная оптимизация параметров и гиперпараметров модели на основе вариационного вывода. Оптимизация решает двухуровневую задачу: на первом уровне проводится оптимизация нижней оценки правдоподобия модели по вариационным параметрам модели. На втором уровне проводится оптимизация гиперпараметров моделии. В качестве оптимизируемой функции для гиперпараметров модели предлагается обобщенная функция качества, позволяющая проводить оптимизацию в нескольких режимах: Add-Del, в режиме полного перебора, а также в режиме максимизации нижней оценки правдоподобия модели.
+
+
+The paper presents the method of deep learning model structure selection. 
+The model is a computation graph, i.e. a graph, which edges correspond to nonlinear functions and vertices correspond to the intermediate state of the dataset after application of these functions.
+Each edge has a set of available nonlinear function such that any linear combination of them is a differential function of the predetermined signature. The structure of the model is a vector of weights for linear combinations of these functions.
+
+For the optimal model strucutre selection the author proposes a probablisitic interpretation of the model. The model parameters and hyperparameters are optimized using gradient methods based on variational inference. The optimization of the model is a bi-level optimization problem. The first level corresponds to the evidence lower bound optimization with regard to  variational model parameter optimization. The second level corresponds to hyperparameter optimization. The author proposes a generalized loss function fo this level, which allows to optimize the hyperparameters in different regimes: Add-Del, bruteforce optimization and evidence lower bound optimization. 
 
 
 \section{Постановка задачи}
