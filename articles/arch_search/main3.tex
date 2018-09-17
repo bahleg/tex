@@ -26,28 +26,27 @@
 \begin{document}
 \section{Аннотация}
 В работе рассматривается задача выбора структуры модели глубокого обучения.
-Модель --- это вычислительный граф, т.е. граф, в котором ребрами выступают нелинейные функции, а вершинами --- результаты дейтсвия функцией на выборку.  Каждому ребру поставлено в соответствтие множество нелинейных функций, такое что любая линейная комбинация этих функций определяет дифференцируемую функцию заданной сигнатуры. Структурой модели назовем веса линейной комбинации этих функций. 
+Модель --- это вычислительный вероятностный граф, т.е. граф, в котором ребрами выступают нелинейные функции, а вершинами --- результаты действия функцией на выборку.  Каждому ребру поставлено в соответствие множество нелинейных функций, такое что линейная комбинация этих функций определяет дифференцируемую функцию заданной сигнатуры. Структурой модели назовем веса линейной комбинации этих функций. 
 
-Для нахождения оптимальной структуры предлагается ввести вероятностную интерпретацию  модели.
-Проводится градиентная оптимизация параметров и гиперпараметров модели на основе вариационного вывода. Оптимизация решает двухуровневую задачу: на первом уровне проводится оптимизация нижней оценки правдоподобия модели по вариационным параметрам модели. На втором уровне проводится оптимизация гиперпараметров моделии. В качестве оптимизируемой функции для гиперпараметров модели предлагается обобщенная функция качества, позволяющая проводить оптимизацию в нескольких режимах: Add-Del, в режиме полного перебора, а также в режиме максимизации нижней оценки правдоподобия модели.
+Для нахождения оптимальной структуры предлагается ввести вероятностную интерпретацию модели, т.е. предположения о распределениях параметров и структуры модели. 
+Проводится градиентная оптимизация параметров и гиперпараметров модели на основе байесовского вариационного вывода. Решается двухуровневая задача оптимизации: на первом уровне проводится оптимизация нижней оценки правдоподобия модели по вариационным параметрам модели. На втором уровне проводится оптимизация гиперпараметров модели. В качестве оптимизируемой функции для гиперпараметров модели предлагается обобщенная функция правдоподобия. Показано, что данная функция позволяет проводить оптимизацию  несколькими алгоритмами: последовательным добавлением и удалением параметров, полным перебором, а также максимизацией нижней оценки правдоподобия модели.
 
+Проводится сравнение с эвристическими алгоритмами выбора структуры модели. Вычислительный эксперимент проводится на синтетических данных и выборке рукописных цифр MNIST.
 
-The paper presents the method of deep learning model structure selection. 
-The model is a computation graph, i.e. a graph, which edges correspond to nonlinear functions and vertices correspond to the intermediate state of the dataset after application of these functions.
-Each edge has a set of available nonlinear function such that any linear combination of them is a differential function of the predetermined signature. The structure of the model is a vector of weights for linear combinations of these functions.
+\textbf{Цель работы:} предложить метод выбора модели субоптимальной сложности, позволяющий проводить выбор модели в нескольких режимах (ELBO, AddDel, полный перебор, оптимизация без регуляризации и с регуляризацией).
 
-For the optimal model strucutre selection the author proposes a probablisitic interpretation of the model. The model parameters and hyperparameters are optimized using gradient methods based on variational inference. The optimization of the model is a bi-level optimization problem. The first level corresponds to the evidence lower bound optimization with regard to  variational model parameter optimization. The second level corresponds to hyperparameter optimization. The author proposes a generalized loss function fo this level, which allows to optimize the hyperparameters in different regimes: Add-Del, bruteforce optimization and evidence lower bound optimization. 
 
 
 \section{Постановка задачи}
-Задана выборка  \begin{equation}\label{eq:dataset}\mathfrak{D} = \{(\mathbf{x}_i,y_i)\}, i = 1,\dots,m,\end{equation} состоящая из множества пар <<объект-метка>> $$\mathbf{x}_i \in \mathbf{X} \subset \mathbb{R}^n, \quad {y}_i \in \mathbf{y} \subset \mathbb{Y}.$$ Метка ${y}$  объекта $\mathbf{x}$ принадлежит либо множеству: ${y} \in \mathbb{Y} = \{1, \dots, Z\}$ в случае задачи классификации, где $Z$ --- число классов, либо некоторому подмножеству вещественных чисел ${y} \in \mathbb{Y}  \subseteq \mathbb{R}$ в случае задачи регрессии. Определим множество архитектур моделей глубокого обучения для дальнейшего выбора оптимальной. 
+Задана выборка \begin{equation}\label{eq:dataset}\mathfrak{D} = \{(\mathbf{x}_i,y_i)\}, i = 1,\dots,m,\end{equation} состоящая из множества пар <<объект-метка>> $$\mathbf{x}_i \in \mathbf{X} \subset \mathbb{R}^n, \quad {y}_i \in \mathbf{y} \subset \mathbb{Y}.$$ Метка ${y}$  объекта $\mathbf{x}$ принадлежит либо множеству: ${y} \in \mathbb{Y} = \{1, \dots, Z\}$ в случае задачи классификации, где $Z$ --- число классов, либо некоторому подмножеству вещественных чисел ${y} \in \mathbb{Y}  \subseteq \mathbb{R}$ в случае задачи регрессии. Далее будем полагать, что объекты $\mathbf{x}$ являются реализацией некоторой случайно величины и порождены независимо.
 
+Определим множество архитектур моделей глубокого обучения для дальнейшего выбора оптимальной. 
 Будем рассматривать модель как граф $V,E$, ребрами $E$ которого являются функции из заданого множества функций $\mathbf{O}$, действующие на выборку, а вершинами $V$ --- промежуточные представления выборки под действием данных функций. Перейдем к формальному определению модели.
 Пусть задан граф $V,E$. Пусть для каждого ребра $<i,j> \in E$ определено множество функций $\mathbf{o}(i,j)$. Граф $V, E$ с множеством функций $\mathbf{O}$ называется моделью, если функция, задаваемая рекурсивно как 
 \[
     f_i(\mathbf{x}) = \sum_{j \in \text{Adj}(v_i)} o(i,j) (f_{j}(\mathbf{x})), 
 \]
-является непрерывной дифференцируемой функцией из $\mathbb{R}^n$ во множество $\mathbb{Y}$ при любом $o(i,j)$, являющемся линейной комбинацией функций из множества $\mathbf{o}(i,j)$.
+является непрерывной дифференцируемой функцией из $\mathbb{R}^n$ во множество $\mathbb{Y}$ при любом $o(i,j)$, являющемся выпуклой комбинацией функций из множества $\mathbf{o}(i,j)$.
 
 Пусть для каждого ребра $i,j$ задан нормированный положительный вектор $\boldsymbol{\gamma}_{i,j} \in \mathbb{R+}^{|\mathbf{o}(i,j)|}$, определяющий веса функций из множества $\mathbf{o}(i,j)$.
 Будем считать, что вектор $\boldsymbol{\gamma}_{i,j}$ распределен по распределению Gumbel-Softmax:
@@ -55,7 +54,6 @@ For the optimal model strucutre selection the author proposes a probablisitic in
     \boldsymbol{\gamma}_{i,j}  \sim \text{GS}({c}, \mathbf{m}_{i,j}).
 \] 
 где $c$ --- вектор концентрации распределения, $\mathbf{m}_{i,j}$ --- вектор средних. Обозначим за структуру модели $\boldsymbol{\Gamma}$ множество всех векторов $\boldsymbol{\gamma}$.
-Заметим, что Gumbel-Softmax-распределение может быть заменено на распределение Дирихле. Однако в дальнейшем нам понадобится проводить градиентную оптимизацию по параметрам данного распределения. Наиболее простым вариантом для подобной оптимизации является Gumbel-Softmax.
 
 Для более адекватной оптимизации положим априорное распределение параметров модели $\mathbf{w}$ зависящим от структуры модели $\boldsymbol{\Gamma}$.  Пусть задано соответствие $S$ между каждым параметром $\mathbf{w} \in \mathbf{W}$ и параметром структуры $\gamma_i$.
 Положим распределение параметров $\mathbf{w}$ нормальным с нулевым средним и диагональной квариационной матрицей:
@@ -78,7 +76,9 @@ For the optimal model strucutre selection the author proposes a probablisitic in
     \argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c).
 \]
 
-\textbf{Утверждение (доказано).} При $c << 0$ оптимизация  $\eqref{eq:evidence}$ эквивалентна оптимизации дискретной оптимизации: $\boldsymbol{\gamma}_{i,j} \in 2^{|\mathbf{o}(i,j)|}$.
+\textbf{Теорема.} При $c << 0$ оптимизация  $\eqref{eq:evidence}$ эквивалентна дискретной оптимизации: $\gamma_{ij} \in \{0, 1\}, ||\gamma_i|| = 1$. 
+
+\textbf{Доказательство.} При $c \to 0$ плотность вероятности сконцентрирована на вершинах симплекса (из оригинальной статьи). Т.к. функция вероятности ограничена, то по теореме Лебега допустим предельный переход к распределению на вершинах.  
 
 
 \section{Вариационная постановка задачи}
@@ -89,17 +89,29 @@ For the optimal model strucutre selection the author proposes a probablisitic in
 \end{equation}
 Разница между верхней оценкой~\eqref{eq:elbo} и правдоподобием модели~\eqref{eq:evidence} определяется дивергенцией между апостериорными распределениями $p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c)$, $p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c).$ и вариационными распределениями  $q_w, q_\gamma$.
 
+Определим основные величины, которые характеризуют сложность модели. \\
+\textbf{Определение} Параметрической сложностью $C_w$ модели назовем наименьшую дивергенцию вариационныъ параметров  при условии априорного распределения параметров:
+\[
+    C_w = \argmin_\mathbf{A} D_\text{KL}\left(q|p\right).
+\]
+(Примечание: кажется, здесь должны учитываться параметры и структура, т.к. в априорном распределении параметров зашита зависимость от структуры).
+
+\textbf{Определение} Структурной сложностью $C_\gamma$ модели назовем энтропию распределения структуры:
+\[
+    C_\gamma = \mathsf{E}_{q_\gamma} \text{log}q_\gamma.
+\]
 %Мотивацию сюда и определения сложности
 Сформулируем основные требования к оптимизационной задаче и оптимизируемым функционалам:
 \begin{enumerate}
 \item Оптимизируемые функции должны быть дифференцируемы.
 \item Степень регуляризации структуры и параметров должна быть контролируемой.
 \item Оптимизация должна приводить к максимуму вариационной оценки.
-\item Оптимизация должна позволять калибровать количество эффектинвых параметров
-\item Оптимизация должна позволять калибровать количество эффекитвных ребер.
+\item Оптимизация должна позволять калибровать параметрическую сложность модели
+\item Оптимизация должна позволять калибровать структурную сложность модели.
 \item Оптимизация должна позволять проводить полный перебор структуры.
 \end{enumerate}
 
+Сформулируем задачу как двухуровневую задачу оптимизации. Обозначим за  $\boldsymbol{\theta}$ оптимизируемые на первом уровне величины. Обозначим за $\mathbf{h}$ величины, оптимизируемые на втором уровне.
 Положим $\boldsymbol{\theta}$ равным параметрам распределений $q_w, q_\gamma$. 
 Положим $\mathbf{h} = [\mathbf{A}, \mathbf{m}].$
 
@@ -109,9 +121,20 @@ For the optimal model strucutre selection the author proposes a probablisitic in
 \]
 где $\hat{\mathbf{w}} \sim q_w, \quad \hat{\boldsymbol{\Gamma}} \sim q_\gamma$, $\beta$ --- коэффициент, контролирующий степень регуляризации структуры и параметров.
 
-\textbf{Утверждение (доказано)}. Пусть $\beta$ выражается как $\frac{m_0}{m}$, где $m_0$ --- натуральное число.
-Тогда оптимизация функции $L$ эквивалентна оптимизации вариационной нижней оценки правдоподобия для подвыборки  $\mathfrak{D}$ 
-мощностью $m_0$.
+
+\textbf{Теорема}. Пусть $\beta \neq 1$ .
+Тогда функция $L$ сходится по вероятности к вариационной нижней оценке правдоподобия для подвыборки  $\mathfrak{D}$ 
+мощностью $\beta m$.\\
+\textbf{Доказательство}. Рассмотрим произвольную подвыборку $\hat{\mathfrak{D}}$ мощностью $m_0$. Верхняя оценка правдоподобия модели для подвыборки имеет вид:
+\[
+ \text{log} p(\hat{\mathbf{y}}|\hat{\mathbf{X}},\mathbf{A},\mathbf{m}, c)  \leq \mathsf{E}_{q_w,q_\gamma}\text{log} p(\hat{\mathbf{y}}|\hat{\mathbf{X}},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - {D_{KL}}(q_\gamma||p(\boldsymbol{\Gamma})) - {D_{KL}}(q_{w}||p(\mathbf{w})).
+\]
+
+\[
+\text{log} p(\hat{\mathbf{y}}|\hat{\mathbf{X}},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) = \sum_i \text{log} p(\hat{\mathbf{y}_i}|\hat{\mathbf{x}_i},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) \to^p_{m \to \infty} m\mathsf{E}\text{log} p(\mathbf{y}|\hat{\mathbf{x}},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c).
+\]
+Формула нижней оценки получается подстановкой.
+~\\~\\
 
 Пусть $Q$ --- валидационная функция:
 \[
@@ -133,31 +156,51 @@ For the optimal model strucutre selection the author proposes a probablisitic in
 \]
 
 
-\textbf{Утверждение}. Пусть $D_{KL}(q_w|p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c)) = 0, D_{KL}(q_\gamma|p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c)) = 0$, пусть $c_1 = 1, c_2 = 1, c_3 = 0$. Тогда оптимизация $\eqref{eq:optim}$ эквивалентна оптимизации $\eqref{eq:evidence}$.
+\textbf{Теорема}. Пусть $D_{KL}(q_w|p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c)) = 0, D_{KL}(q_\gamma|p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c)) = 0$, пусть $c_1 = 1, c_2 = 1, c_3 = 0$. Тогда оптимизация $\eqref{eq:optim}$ эквивалентна оптимизации $\eqref{eq:evidence}$.\\~\\
+\textbf{Доказательство.} При соблюдении условий теоремы неравенство вариационной оценки превращается в равенство. 
 
-\textbf{Определение (предварительно)}Параметрической $\delta$-сложностью модели назовем матожидание следующей величины:
-\[
-    C_\text{p}(\delta, \mathbf{w}) = \mathsf{E}\sum_{w \in \mathbf{w}} I(|w| > \delta).
-\] 
+\textbf{Теорема.} Пусть $c_1 = 1, c_3 = 0$. При $c_2 \to \infty$ параметрическая сложность $C_w \to 0$.
+\textbf{Доказательство (идея).} При $C_w \to \infty$ априорное распределение $p(\mathbf{w})$ будет стремиться к дельта-функции. Штраф за $D_KL$ будет расти, параметры будут стремиться к нулю.
+   
 
-\textbf{Определение (предварительно)} Структурной $\delta$-сложностью модели назовем матожидание следующей величины:
+\textbf{Теорема.} Пусть $c_1 = 1,  c_3 = 0, c_2 > 0, c_2' > c_2$ и  логарифм распределения $\mathsf{E}_{q_w,q_\gamma}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c)$ является выпуклым.
+Пусть $q(\mathbf{w}), q(\mathbf{w})'$ --- распределения, полученные в результате оптимизаций с различными коэффициентами $c_2, c_2'$ соответственно. Тогда  $C_w(q) \geq C_w(q').$  
+
+\textbf{Доказательство (не окончено).}
+Заметим, что $q$ и $q'$ можно выразить следующим образом:
 \[
-     C_\text{s}(\delta, \boldsymbol{\Gamma}) = \mathsf{E}\sum_{\boldsymbol{\gamma} \in \boldsymbol{\Gamma}}\sum_{\gamma_i \in \boldsymbol{\gamma}} I(\gamma_i > \delta). 
+    q = \arg\max_{\hat{q}: L(\hat{q}, \mathbf{A}, \boldsymbol{\Gamma}} Q( \mathbf{A}, \boldsymbol{\Gamma}, c_2),
+\]
+\[
+    q' = \argmax_{\hat{q}: L(\hat{q}, \mathbf{A}, \boldsymbol{\Gamma}} Q( \mathbf{A}, \boldsymbol{\Gamma}, c_2').
 \]
 
+Функция $Q$ является выпуклой как сумма выпуклых функций. Отсюда справедливы следующие неравенства (по единственности точек экстремума):
+\[
+    \mathsf{E}_{q}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - c_2  D_\text{KL}(q||p)  -  \mathsf{E}_{q'}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) + c_2  D_\text{KL}(q'||p) > 0,
+\]
+\[
+    \mathsf{E}_{q'}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - c_2'  D_\text{KL}(q'||p)  -  \mathsf{E}_{q}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) + c_2  D_\text{KL}(q||p) > 0.
+\]
 
-\textbf{Утверждение (предварительно).} Пусть $c_1 = 1, c_3 = 0, c_2 > 0, c_2' < c_2$. Пусть $\mathbf{w}, \mathbf{w}'$ --- параметры, полученные в результате соответствющих оптимизаций. Тогда  $C_\text{p}(\delta, \mathbf{w}') \leq C_\text{p}(\delta, \mathbf{w}).$ 
+Вычитая неравенства получим:
+\[
+    D_\text{KL}(q||p) \geq D_\text{KL}(q'||p'),
+\]
+\[
+    \mathsf{E}_{q'}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c)  \leq \mathsf{E}_{q}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) .
+\]
 
-\textbf{Утверждение (доказано).} Пусть $c_1 = 1, c_3 = 0$. Тогда  $C_\text{p}(\delta, \mathbf{w}(c_2)) \to_{c_2 \to \infty} 0$. 
+\textbf{Теорема} Пусть при любых выпуклых комбинациях функций $\mathbf{O}$ модель является выпуклой. Пусть $c_1,c_2 \geq 0,  c_3 \leq 0$. Пусть в качестве оценки правдоподобия выборки используется следующая:
+\[
+    \mathsf{E}_{q_w,q_\gamma}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) \sim \frac{1}{N}\sum_{k=1}^N \text{log} p(\mathbf{y}|\mathbf{X},\hat{\mathbf{w}_i}, \hat{\boldsymbol{\Gamma}_i}, \mathbf{A},\mathbf{m}, c),
+\]  
+где $\hat{\mathbf{w}_i}, \hat{\boldsymbol{\Gamma}_i}$ зафиксированные получены под действием вариационной репараметризации с зафиксированной реализацией исходных случайных величин. Тогда $L$ и $Q$ являются выпуклыми функциями.
+\textbf{Доказательство} По сумме выпуклых функций.
+ 
+\textbf{Теорема (предварительно)} При $c \to 0$ $C_\gamma \to 0$.
 
-
-\textbf{Утверждение (предварительно).} Пусть $c_1 = 1, c_3 = 0$. Максимум величины $C_\text{p}(\delta, \mathbf{w}(c_2))$ достигается при $c_2= 0$. 
-
-
-\textbf{Утверждение (доказано).} Пусть $c_1 = c_2 = 1$. $C_\text{s}(\delta, \mathbf{w}')  \to \min$ при $c \to 0$.
-
-
-\textbf{Утверждение (предварительно).} Пусть $c_1 = c_2 = 1$. $C_\text{s}(\delta, \mathbf{w}')  \to \max$ при $c \to \infty$.
+\textbf{Теорема (предварительно)} При $c \to \infty$ $C_\gamma \to \max$.
 
 \textbf{Утверждение (предварительно, нужно развить).} Пусть $c_3 > 0, c << 0$ и все $p_k \in \mathbf{p}$ отражают распределения на вершинах симплекса. Тогда оптимизация приведет к $q_\gamma$, сконцентрированному на одной из остальных вершин симплекса.
 
@@ -170,7 +213,6 @@ For the optimal model strucutre selection the author proposes a probablisitic in
 \textbf{Утверждение (предварительно).} Пусть $c_1 = c_2 = c_3 = 0$. Пусть $q_w \sim \mathcal{N}(\mathbf{0}, \sigma), \sigma \sim 0$. 
 Тогда оптимизация эквивалентна обычной оптимизации параметров с $l_2$ - регуляризацией.
 
-Далее будем рассматривать $q_w \sim \mathcal{N}(\mathbf{0}, \mathbf{A}_q^{-1}), \quad q_\gamma \sim \text{Gumbel-Softmax}(\mathbf{g}, \tau).$
 
 \section{Вычислительный эксперимент}
 В качестве модельного эксперимента рассматривалась задача выбора модели линейной регрессии.
@@ -193,7 +235,7 @@ For the optimal model strucutre selection the author proposes a probablisitic in
 
 \item $f_3 = \mathbf{w}_3 \mathbf{X}_3$ (модель --- регрессия только по шумовому признаку), 
 
-\item $f_4 = \mathbf{w}_4 \mathbf{X} (модель --- регрессия по всем признакам). $
+\item $f_4 = \mathbf{w}_4 \mathbf{X}$ (модель --- регрессия по всем признакам). 
 \end{enumerate}
 
 Ожидаемое поведение оптимизации:
