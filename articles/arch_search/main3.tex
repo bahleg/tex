@@ -19,7 +19,7 @@
 \usepackage{subcaption}
 \usepackage{multicol}
 \usepackage{multirow}
-
+\sloppy
 %\renewcommand{\headrulewidth}{0pt}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\argmax}{arg\,max}
@@ -160,27 +160,28 @@
 \textbf{Доказательство.} При соблюдении условий теоремы неравенство вариационной оценки превращается в равенство. 
 
 \textbf{Теорема.} Пусть $c_1 = 1, c_3 = 0$. При $c_2 \to \infty$ параметрическая сложность $C_w \to 0$.
-\textbf{Доказательство (идея).} При $C_w \to \infty$ априорное распределение $p(\mathbf{w})$ будет стремиться к дельта-функции. Штраф за $D_KL$ будет расти, параметры будут стремиться к нулю.
+
+\textbf{Доказательство (идея).} При $C_w \to \infty$ априорное распределение $p(\mathbf{w})$ будет стремиться к дельта-функции. Штраф за $D_{KL}$ будет расти, параметры будут стремиться к нулю.
    
 
 \textbf{Теорема.} Пусть $c_1 = 1,  c_3 = 0, c_2 > 0, c_2' > c_2$ и  логарифм распределения $\mathsf{E}_{q_w,q_\gamma}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c)$ является выпуклым.
 Пусть $q(\mathbf{w}), q(\mathbf{w})'$ --- распределения, полученные в результате оптимизаций с различными коэффициентами $c_2, c_2'$ соответственно. Тогда  $C_w(q) \geq C_w(q').$  
 
-\textbf{Доказательство (не окончено).}
+\textbf{Доказательство.}
 Заметим, что $q$ и $q'$ можно выразить следующим образом:
 \[
-    q = \arg\max_{\hat{q}: L(\hat{q}, \mathbf{A}, \boldsymbol{\Gamma}} Q( \mathbf{A}, \boldsymbol{\Gamma}, c_2),
+    q = \arg\max_{\hat{q}: L(\hat{q}, \mathbf{A}, \boldsymbol{\Gamma}) = \max} Q( \mathbf{A}, \boldsymbol{\Gamma}, c_2),
 \]
 \[
-    q' = \argmax_{\hat{q}: L(\hat{q}, \mathbf{A}, \boldsymbol{\Gamma}} Q( \mathbf{A}, \boldsymbol{\Gamma}, c_2').
+    q' = \argmax_{\hat{q}: L(\hat{q}, \mathbf{A}, \boldsymbol{\Gamma})  = \max} Q( \mathbf{A}, \boldsymbol{\Gamma}, c_2').
 \]
 
 Функция $Q$ является выпуклой как сумма выпуклых функций. Отсюда справедливы следующие неравенства (по единственности точек экстремума):
 \[
-    \mathsf{E}_{q}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - c_2  D_\text{KL}(q||p)  -  \mathsf{E}_{q'}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) + c_2  D_\text{KL}(q'||p) > 0,
+    \mathsf{E}_{q}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - c_2  D_\text{KL}(q||p)  -  \mathsf{E}_{q'}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) + c_2  D_\text{KL}(q'||p') \geq 0,
 \]
 \[
-    \mathsf{E}_{q'}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - c_2'  D_\text{KL}(q'||p)  -  \mathsf{E}_{q}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) + c_2  D_\text{KL}(q||p) > 0.
+    \mathsf{E}_{q'}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - c_2'  D_\text{KL}(q'||p')  -  \mathsf{E}_{q}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) + c_2'  D_\text{KL}(q||p) \geq 0.
 \]
 
 Вычитая неравенства получим:
@@ -191,14 +192,29 @@
     \mathsf{E}_{q'}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c)  \leq \mathsf{E}_{q}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) .
 \]
 
+С учетом полученных неравенств распишем доказываемое утверждение:
+\[
+    \max_p -D_\text{KL}(q||p) - \max_{p'} -D_\text{KL}(q'||p') \propto 
+\]
+\[ \propto\max_p - c_2' D_\text{KL}(q||p) +\mathsf{E}_{q}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - \mathsf{E}_{q}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) -
+\]
+\[  - \max_{p'} -c_2' D_\text{KL}(q'||p')  + \mathsf{E}_{q'}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) +\mathsf{E}_{q'}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c)     \leq 0,  
+\]
+что и т.д.
+
 \textbf{Теорема} Пусть при любых выпуклых комбинациях функций $\mathbf{O}$ модель является выпуклой. Пусть $c_1,c_2 \geq 0,  c_3 \leq 0$. Пусть в качестве оценки правдоподобия выборки используется следующая:
 \[
     \mathsf{E}_{q_w,q_\gamma}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) \sim \frac{1}{N}\sum_{k=1}^N \text{log} p(\mathbf{y}|\mathbf{X},\hat{\mathbf{w}_i}, \hat{\boldsymbol{\Gamma}_i}, \mathbf{A},\mathbf{m}, c),
 \]  
-где $\hat{\mathbf{w}_i}, \hat{\boldsymbol{\Gamma}_i}$ зафиксированные получены под действием вариационной репараметризации с зафиксированной реализацией исходных случайных величин. Тогда $L$ и $Q$ являются выпуклыми функциями.
+где $\hat{\mathbf{w}_i}, \hat{\boldsymbol{\Gamma}_i}$ получены под действием вариационной репараметризации с зафиксированной реализацией исходных случайных величин. Тогда $L$ и $Q$ являются выпуклыми функциями.
+
 \textbf{Доказательство} По сумме выпуклых функций.
+
  
-\textbf{Теорема (предварительно)} При $c \to 0$ $C_\gamma \to 0$.
+\textbf{Теорема} При $c \to 0$ $C_\gamma \to 0$.
+
+\textbf{Доказательство (идея)} При $c \to 0$ $p(\boldsymbol{\Gamma})$ вероятностная масса концентрируется на вершинах симплекса. $D_\text{KL} (p||q)$ будет равняться $-\infty$ при $q_\gamma$, распределенном не на вершинах симплекса. Тогда $q_\Gamma$ становится бинарным. 
+
 
 \textbf{Теорема (предварительно)} При $c \to \infty$ $C_\gamma \to \max$.
 
