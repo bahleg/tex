@@ -71,24 +71,75 @@
 	p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}}) = \int_{\mathbf{w}, \boldsymbol{\Gamma} } p(\mathbf{y}|\mathbf{X},\mathbf{w},  \boldsymbol{\Gamma})p(\mathbf{w}|\mathbf{A})p(\boldsymbol{\Gamma}|\mathbf{m}, c_{\text{temp}})d\mathbf{w}d\mathbf{\Gamma}.
 \end{equation}
 
-Пусть задано значение концентрации $c_{\text{temp}}$. 
 Требуется найти гиперпараметры модели $\mathbf{A}, \mathbf{m}$ доставляющие максимум правдоподобия модели:
-\[
-    \argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c).
-\]
+\begin{equation}
+\label{eq:evidence_optim}
+    \argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, {c_\text{temp}}),
+\end{equation}
 
-\textbf{Теорема.} При $c << 0$ оптимизация  $\eqref{eq:evidence}$ эквивалентна дискретной оптимизации: $\gamma_{ij} \in \{0, 1\}, ||\gamma_i|| = 1$. 
+а также соотвествующие параметры и структур модели (см. вывод Байесва, первый уровень).
+
+Докажем теорему о дискретности решиния задачи нахождения оптимальных параметров модели.
+
+\textbf{Теорема} 
+Пусть $\boldsymbol{\Gamma}_1$ и $\boldsymbol{\Gamma}_2$ --- реализации $\boldsymbol{\Gamma}$, такие что:
+\begin{itemize}
+\item $\boldsymbol{\Gamma}_1$ не содержит в себе точки внутри симплексов $\gamma$.
+\item $\boldsymbol{\Gamma}_2$  содержит в себе точки внутри симплексов $\gamma$.
+\end{itemize} 
+Тогда для любых положительно определенных матриц $\mathbf{A}_1$ и $\mathbf{A}_2$ и векторов $\mathbf{m}_1, \mathbf{m}_2$ справедлива следующая формула:
+$$\lim_{c_\text{temp} \to 0} \frac{p(\boldsymbol{\Gamma}_1|\mathbf{y}, \mathbf{W}, \mathbf{X},\mathbf{A}_1,\mathbf{m}_1, {c_\text{temp}})}{p(\boldsymbol{\Gamma}_1|\mathbf{y}, \mathbf{W}, \mathbf{X},\mathbf{A}_1,\mathbf{m}_1, {c_\text{temp}})} = \infty.$$
+
+\textbf{Доказательство}.
+По теореме из оригинальной статьи $$p(\lim_{c_{\text{temp}} \to 0} \mathbf{m} \text{ лежит на вершинах произведения симплексов}) = 1.$$
+Тогда апостериорная вероятность $\boldsymbol{\Gamma}:$
+$$p(\boldsymbol{\Gamma}_1|\mathbf{y}, \mathbf{W}, \mathbf{X},\mathbf{A}_1,\mathbf{m}_1, {c_\text{temp}}) \propto p(\boldsymbol{\Gamma}) p(\mathbf{y} |\boldsymbol{\Gamma},   \mathbf{W}, \mathbf{X},\mathbf{A}_1,\mathbf{m})$$ будет стремиться к нулю при наличии точке вутри симплексов. Что и требовалось доказать.
+
+TODO: еще бы хотелось расписать, что гамма должна в дискретном случае концентрироваться на одной вершине, но пока непонятно как сформулировать.
+
+
+\section{Вариационный вывод}
+В общем виде вычисление значения интеграла~\eqref{eq:evidence} является вычислительно сложной процедурой. В качестве приближенного значения интеграла будем использовать вариационную верхнюю оценку правдоподобия модели. Пусть задано непрерывное параметрические распределение $q$, аппроксимирующие апостериорные распределение $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c_{\text{temp}})$.
+
+Тогда верно следующее выражение:
+\begin{equation}
+\label{eq:elbo}
+    \text{log} p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c)  \geq \mathsf{E}_{q}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{W}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c_{\text{temp}} - {D_{KL}}(q||p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c_{\text{temp}})).
+\end{equation}
+
+Разница между верхней оценкой~\eqref{eq:elbo} и правдоподобием модели~\eqref{eq:evidence} определяется дивергенцией между вариацоинным распределение $q$ и апостериорным распределением $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c_{\text{temp}})$. 
+
+В дальнейшем будем использовать следующую форму вариационного распределения:
+$$q = q_{\mathbf{W}}q_{\boldsymbol{\Gamma}}:$$
+$$q_{\mathbf{W}} \sim \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q), \quad q_{\boldsymbol{\Gamma}} = \prod_{(j,k) \in E} q_\gamma^{j,k}, \quad q_\gamma \sim \mathcal{GS}( \mathbf{m}^{j,k}, c_q).$$
+В дальнейшем будем обозначать за $\mathbf{m}_q$ конкатенацию всех векторов средних  $\mathbf{m}^{j,k}$.
+
+Докажем теорему о дискретности задачи 
+
+Пусть задано значение концентрации $c_{\text{temp}}$. 
+
+
+
+
+
+
+\subsection{О параметрической сложности}
+
+\subsection{О структурной сложности}
+
+\subsection{О переборе вариантов}
+
+\subsection{Общая теорема} 
+
+\section{Вариационная постановка задачи}
+
+
+
+\textbf{Теорема.} При устремлении температуры $c_{\text{temp}}$ задача оптимизации~\eqref{eq:evidence} становится дискретной. оптимизация  $\eqref{eq:evidence}$ эквивалентна дискретной оптимизации: $\gamma_{ij} \in \{0, 1\}, ||\gamma_i|| = 1$. 
 
 \textbf{Доказательство.} При $c \to 0$ плотность вероятности сконцентрирована на вершинах симплекса (из оригинальной статьи). Т.к. функция вероятности ограничена, то по теореме Лебега допустим предельный переход к распределению на вершинах.  
 
 
-\section{Вариационная постановка задачи}
-В общем виде вычисление значения интеграла~\eqref{eq:evidence} является вычислительно сложной процедурой. В качестве приближенного значения интеграла будем использовать вариационную верхнюю оценку правдоподобия модели. Пусть заданы непрерывные параметрические распределения $q_w, q_\gamma$, аппроксимирующие апостериорные распределения $p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c)$, $p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c).$ Тогда верно следующее выражение:
-\begin{equation}
-\label{eq:elbo}
-    \text{log} p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c)  \leq \mathsf{E}_{q_w,q_\gamma}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - {D_{KL}}(q_\gamma||p(\boldsymbol{\Gamma})) - {D_{KL}}(q_{w}||p(\mathbf{w})).
-\end{equation}
-Разница между верхней оценкой~\eqref{eq:elbo} и правдоподобием модели~\eqref{eq:evidence} определяется дивергенцией между апостериорными распределениями $p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c)$, $p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c).$ и вариационными распределениями  $q_w, q_\gamma$.
 
 Определим основные величины, которые характеризуют сложность модели. \\
 \textbf{Определение} Параметрической сложностью $C_w$ модели назовем наименьшую дивергенцию вариационныъ параметров  при условии априорного распределения параметров:
